@@ -28,8 +28,8 @@ jobs:
       - name: Install and build
         working-directory: webpage
         env:
-          # Must match your GitHub repo name (URL path). Repo: plot-care-demo → /plot-care-demo
-          NEXT_PUBLIC_BASE_PATH: /plot-care-demo
+          # Must match the repo segment in your Pages URL (same as GitHub repo name)
+          NEXT_PUBLIC_BASE_PATH: /PlotCaRe-temp
         run: |
           npm ci
           npm run build

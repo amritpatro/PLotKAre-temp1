@@ -1,35 +1,28 @@
-# Plot Care Demo
+# PlotCaRe-temp
 
-Next.js site for PlotKare (landing, dashboard, admin). Static export for **GitHub Pages**.
+Next.js PlotKare site (static export) for **GitHub Pages**.
 
-## Live site (after you enable Pages)
+**Repository:** [amritpatro/PlotCaRe-temp](https://github.com/amritpatro/PlotCaRe-temp)
 
-`https://<your-username>.github.io/plot-care-demo/`
+## Live site
 
-## Create the GitHub repo
+After Pages is enabled and the workflow runs: **`https://amritpatro.github.io/PlotCaRe-temp/`**
 
-1. On GitHub: **New repository**
-2. Name: **`plot-care-demo`** (required for the default Pages URL and workflow `NEXT_PUBLIC_BASE_PATH`)
-3. Description: e.g. `Plot Care Demo`
-4. Public, no README/license (this repo already has files)
-5. Create repository
-
-## Push from your computer
+## Push updates
 
 ```bash
 cd "path/to/PLotKAre"
-git remote add origin https://github.com/<YOUR_USERNAME>/plot-care-demo.git
-git branch -M main
+git remote add origin https://github.com/amritpatro/PlotCaRe-temp.git   # first time only
 git push -u origin main
 ```
 
-## Enable GitHub Pages
+If `origin` already exists: `git remote set-url origin https://github.com/amritpatro/PlotCaRe-temp.git`
+
+## Enable GitHub Pages (once)
 
 1. Repo **Settings → Pages**
-2. **Build and deployment**: Source = **GitHub Actions**
-3. After the first workflow run succeeds, open the site URL above.
-
-If your repo name is **not** `plot-care-demo`, edit `.github/workflows/deploy-github-pages.yml` and set `NEXT_PUBLIC_BASE_PATH` to `/<your-repo-name>`.
+2. **Build and deployment** → Source: **GitHub Actions**
+3. Open the **Actions** tab and confirm **Deploy to GitHub Pages** succeeds
 
 ## Local dev
 
@@ -39,4 +32,4 @@ npm install
 npm run dev
 ```
 
-Do **not** set `NEXT_PUBLIC_BASE_PATH` locally unless you are testing a subpath build.
+Do not set `NEXT_PUBLIC_BASE_PATH` locally unless testing a subpath build.
