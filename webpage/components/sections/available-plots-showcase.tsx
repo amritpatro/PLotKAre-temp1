@@ -1,0 +1,359 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { motion, AnimatePresence } from 'framer-motion'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { PlotTopdownSvg } from '@/components/plot-topdown-svg'
+import {
+  DEFAULT_PUBLIC_LISTINGS,
+  getLandingShowcaseListings,
+  loadPublicListings,
+  type PublicPlotListing,
+} from '@/lib/public-listings'
+
+const CRIMSON = '#C0392B'
+const GOLD = '#F59E0B'
+
+function ListingInquiryForm({
+  plot,
+  onSuccess,
+}: {
+  plot: PublicPlotListing | null
+  onSuccess: () => void
+}) {
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
+  const [message, setMessage] = useState('I am interested in this plot')
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const em = localStorage.getItem('plotkare_session_email') ?? ''
+    if (em) setEmail(em)
+  }, [plot])
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    onSuccess()
+  }
+
+  if (!plot) return null
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4 pt-2">
+      <div>
+        <label className="font-mono text-xs text-white/50">Name</label>
+        <input
+          required
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="mt-1 w-full rounded-lg border border-white/15 bg-black/40 px-4 py-3 font-sans text-white outline-none focus:ring-2 focus:ring-[#C0392B]"
+        />
+      </div>
+      <div>
+        <label className="font-mono text-xs text-white/50">Email</label>
+        <input
+          required
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="mt-1 w-full rounded-lg border border-white/15 bg-black/40 px-4 py-3 font-sans text-white outline-none focus:ring-2 focus:ring-[#C0392B]"
+        />
+      </div>
+      <div>
+        <label className="font-mono text-xs text-white/50">Phone</label>
+        <input
+          required
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          className="mt-1 w-full rounded-lg border border-white/15 bg-black/40 px-4 py-3 font-sans text-white outline-none focus:ring-2 focus:ring-[#C0392B]"
+        />
+      </div>
+      <div>
+        <label className="font-mono text-xs text-white/50">Message</label>
+        <textarea
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          rows={4}
+          className="mt-1 w-full resize-none rounded-lg border border-white/15 bg-black/40 px-4 py-3 font-sans text-white outline-none focus:ring-2 focus:ring-[#C0392B]"
+        />
+      </div>
+      <button
+        type="submit"
+        className="w-full rounded-lg py-3 font-sans text-sm font-semibold text-white transition-opacity hover:opacity-95"
+        style={{ backgroundColor: CRIMSON }}
+      >
+        Send Inquiry
+      </button>
+    </form>
+  )
+}
+
+function PlotCard({
+  plot,
+  onViewDetails,
+  onInquire,
+}: {
+  plot: PublicPlotListing
+  onViewDetails: () => void
+  onInquire: () => void
+}) {
+  return (
+    <motion.article
+      whileHover={{ scale: 1.03 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+      className="group relative h-[420px] overflow-hidden rounded-2xl border border-white/10 shadow-xl"
+    >
+      <Image
+        src={plot.imageUrl}
+        alt=""
+        fill
+        className="object-cover transition-[filter,transform] duration-300 group-hover:brightness-[1.08]"
+        sizes="(max-width:768px) 100vw, 33vw"
+        priority
+      />
+      <div
+        className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/10"
+        aria-hidden
+      />
+      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 p-5 md:p-6">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="rounded-full bg-[#16A34A]/90 px-2.5 py-1 font-sans text-[10px] font-semibold uppercase tracking-wide text-white">
+            Verified by PlotKare
+          </span>
+          {plot.premium && (
+            <span
+              className="rounded-full px-2.5 py-1 font-sans text-[10px] font-semibold uppercase tracking-wide text-white"
+              style={{ backgroundColor: CRIMSON }}
+            >
+              Premium
+            </span>
+          )}
+        </div>
+        <p className="font-mono text-sm font-medium md:text-base" style={{ color: CRIMSON }}>
+          {plot.plotNumber}
+        </p>
+        <h3 className="font-serif text-2xl font-bold leading-tight text-white md:text-3xl">
+          {plot.location}
+        </h3>
+        <div className="flex flex-wrap gap-2">
+          <span className="rounded-full border border-white/15 bg-black/30 px-3 py-1 font-sans text-xs text-white/60">
+            {plot.sizeLabel}
+          </span>
+          <span className="rounded-full border border-white/15 bg-black/30 px-3 py-1 font-sans text-xs text-white/60">
+            {plot.facing} facing
+          </span>
+          {plot.cornerPlot && (
+            <span className="rounded-full border border-white/15 bg-black/30 px-3 py-1 font-sans text-xs text-white/60">
+              Corner Plot
+            </span>
+          )}
+        </div>
+        <p className="font-mono text-2xl font-bold md:text-3xl" style={{ color: GOLD }}>
+          ₹ {plot.priceDisplay}
+        </p>
+        <div className="flex flex-wrap gap-3 pt-1">
+          <button
+            type="button"
+            onClick={onViewDetails}
+            className="rounded-xl border-2 border-white bg-transparent px-5 py-2.5 font-sans text-sm font-semibold text-white transition-colors hover:bg-white/10"
+          >
+            View Details
+          </button>
+          <button
+            type="button"
+            onClick={onInquire}
+            className="rounded-xl px-5 py-2.5 font-sans text-sm font-semibold text-white transition-opacity hover:opacity-90"
+            style={{ backgroundColor: CRIMSON }}
+          >
+            Inquire Now
+          </button>
+        </div>
+      </div>
+    </motion.article>
+  )
+}
+
+export function AvailablePlotsShowcaseSection() {
+  const [listings, setListings] = useState<PublicPlotListing[]>(DEFAULT_PUBLIC_LISTINGS)
+  const [detailPlot, setDetailPlot] = useState<PublicPlotListing | null>(null)
+  const [inquiryPlot, setInquiryPlot] = useState<PublicPlotListing | null>(null)
+  const [inquirySuccess, setInquirySuccess] = useState(false)
+
+  useEffect(() => {
+    const sync = () => setListings(loadPublicListings())
+    sync()
+    window.addEventListener('plotkare-listings-changed', sync)
+    window.addEventListener('storage', sync)
+    return () => {
+      window.removeEventListener('plotkare-listings-changed', sync)
+      window.removeEventListener('storage', sync)
+    }
+  }, [])
+
+  const showcase = getLandingShowcaseListings(listings)
+
+  return (
+    <section className="bg-charcoal py-24 lg:py-32">
+      <div className="mx-auto max-w-[1400px] px-6 lg:px-12">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55 }}
+          className="mb-12 text-center"
+        >
+          <h2 className="font-serif text-4xl font-bold text-white md:text-5xl">
+            Available Plots in Visakhapatnam
+          </h2>
+          <p className="mt-4 font-sans text-lg text-white/55">
+            Verified vacant plots monitored by PlotKare agents
+          </p>
+        </motion.div>
+
+        <div className="grid gap-6 md:grid-cols-3 md:gap-8">
+          {showcase.map((plot) => (
+            <motion.div
+              key={plot.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
+              <PlotCard
+                plot={plot}
+                onViewDetails={() => setDetailPlot(plot)}
+                onInquire={() => {
+                  setInquirySuccess(false)
+                  setInquiryPlot(plot)
+                }}
+              />
+            </motion.div>
+          ))}
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55, delay: 0.1 }}
+          className="relative mt-14 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.06] px-6 py-10 text-center backdrop-blur-xl md:px-12"
+        >
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-black/40" />
+          <p className="relative mx-auto max-w-2xl font-sans text-base text-white/75 md:text-lg">
+            Want to see more verified plots? Sign in to access all listings and contact sellers directly
+          </p>
+          <Link
+            href="/login"
+            className="relative mt-6 inline-flex rounded-xl px-10 py-3.5 font-sans text-sm font-semibold text-white transition-opacity hover:opacity-90"
+            style={{ backgroundColor: CRIMSON }}
+          >
+            Sign In to See More
+          </Link>
+        </motion.div>
+      </div>
+
+      <Dialog open={!!detailPlot} onOpenChange={(o) => !o && setDetailPlot(null)}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto border-white/10 bg-[#141414] text-white sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="font-serif text-xl text-white">Plot details</DialogTitle>
+          </DialogHeader>
+          {detailPlot && (
+            <div className="space-y-5 pt-2">
+              <div className="relative aspect-[16/10] w-full overflow-hidden rounded-lg">
+                <Image
+                  src={detailPlot.imageUrl}
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="500px"
+                />
+              </div>
+              <div className="space-y-1 font-sans text-sm text-white/70">
+                <p>
+                  <span className="text-white/50">Plot number:</span>{' '}
+                  <span className="font-mono" style={{ color: CRIMSON }}>
+                    {detailPlot.plotNumber}
+                  </span>
+                </p>
+                <p>
+                  <span className="text-white/50">Location:</span>{' '}
+                  <span className="font-serif text-lg text-white">{detailPlot.location}</span>
+                </p>
+                <p>
+                  <span className="text-white/50">Size:</span> {detailPlot.sizeLabel}
+                </p>
+                <p>
+                  <span className="text-white/50">Facing:</span> {detailPlot.facing}
+                </p>
+                <p>
+                  <span className="text-white/50">Corner plot:</span>{' '}
+                  {detailPlot.cornerPlot ? 'Yes' : 'No'}
+                </p>
+                <p className="font-mono text-xl font-semibold" style={{ color: GOLD }}>
+                  Asking ₹ {detailPlot.priceDisplay}
+                </p>
+              </div>
+              <PlotTopdownSvg cornerPlot={detailPlot.cornerPlot} className="border-white/15" />
+              <button
+                type="button"
+                onClick={() => {
+                  setDetailPlot(null)
+                  setInquirySuccess(false)
+                  setInquiryPlot(detailPlot)
+                }}
+                className="w-full rounded-lg py-3 font-sans text-sm font-semibold text-white"
+                style={{ backgroundColor: CRIMSON }}
+              >
+                Inquire Now
+              </button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={!!inquiryPlot}
+        onOpenChange={(o) => {
+          if (!o) {
+            setInquiryPlot(null)
+            setInquirySuccess(false)
+          }
+        }}
+      >
+        <DialogContent className="border-white/10 bg-[#141414] text-white sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-serif text-xl text-white">
+              {inquirySuccess ? 'Thank you' : 'Contact us'}
+            </DialogTitle>
+          </DialogHeader>
+          <AnimatePresence mode="wait">
+            {inquirySuccess ? (
+              <motion.p
+                key="ok"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="font-sans text-sm leading-relaxed text-white/80"
+              >
+                Your inquiry has been received. Our advisor will contact you within 24 hours.
+              </motion.p>
+            ) : (
+              <ListingInquiryForm
+                key="form"
+                plot={inquiryPlot}
+                onSuccess={() => setInquirySuccess(true)}
+              />
+            )}
+          </AnimatePresence>
+        </DialogContent>
+      </Dialog>
+    </section>
+  )
+}
