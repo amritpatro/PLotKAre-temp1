@@ -28,19 +28,42 @@ jobs:
       - name: Install and build
         working-directory: webpage
         env:
-          # Must match the repo segment in your Pages URL (same as GitHub repo name)
+          # Repo segment in https://amritpatro.github.io/PlotCaRe-temp/
           NEXT_PUBLIC_BASE_PATH: /PlotCaRe-temp
         run: |
           npm ci
           npm run build
 
+      # Next.js with basePath emits either out/index.html or out/<basePath>/index.html
+      # GitHub Pages serves the *artifact root* as the site root for project pages.
+      - name: Resolve Pages artifact directory
+        id: pages_root
+        run: |
+          set -e
+          BASE="PlotCaRe-temp"
+          if [ -f webpage/out/index.html ]; then
+            echo "dir=webpage/out" >> "$GITHUB_OUTPUT"
+            echo "Using webpage/out (flat export)"
+          elif [ -f "webpage/out/${BASE}/index.html" ]; then
+            echo "dir=webpage/out/${BASE}" >> "$GITHUB_OUTPUT"
+            echo "Using webpage/out/${BASE} (basePath nested export)"
+          else
+            echo "Could not find index.html under webpage/out:"
+            find webpage/out -maxdepth 3 -type f -name 'index.html' 2>/dev/null || true
+            ls -la webpage/out || true
+            exit 1
+          fi
+
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: webpage/out
+          path: ${{ steps.pages_root.outputs.dir }}
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
