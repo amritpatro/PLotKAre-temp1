@@ -27,12 +27,9 @@ jobs:
 
       - name: Install and build
         working-directory: webpage
-        env:
-          # Repo segment in https://amritpatro.github.io/PlotCaRe-temp/
-          NEXT_PUBLIC_BASE_PATH: /PlotCaRe-temp
         run: |
           npm ci
-          npm run build
+          npm run build:github
 
       # Next.js with basePath emits either out/index.html or out/<basePath>/index.html
       # GitHub Pages serves the *artifact root* as the site root for project pages.

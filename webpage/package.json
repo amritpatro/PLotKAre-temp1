@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:github": "cross-env NEXT_PUBLIC_BASE_PATH=/PlotCaRe-temp next build",
     "start": "next start",
     "lint": "eslint ."
   },
@@ -68,6 +69,7 @@
     "@types/node": "^22",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
+    "cross-env": "^10.1.0",
     "postcss": "^8.5",
     "tailwindcss": "^4.2.0",
     "tw-animate-css": "1.3.3",
