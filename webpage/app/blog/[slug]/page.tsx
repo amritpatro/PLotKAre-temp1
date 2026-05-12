@@ -54,10 +54,16 @@ export default async function BlogArticlePage({ params }: Props) {
       <div className="mx-auto max-w-3xl px-6 py-16">
         <p className="font-mono text-sm text-primary">
           <Link href="/blog/" className="hover:underline">
-            ← Blog
+            Back to Blog
           </Link>
         </p>
-        <p className="mt-6 font-mono text-xs text-muted-foreground">{post.datePublished}</p>
+        <div className="mt-6 flex flex-wrap items-center gap-3">
+          <span className="rounded-sm bg-primary/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wide text-primary">
+            {post.category}
+          </span>
+          <span className="font-mono text-xs text-muted-foreground">{post.readTime}</span>
+          <span className="font-mono text-xs text-muted-foreground">{post.datePublished}</span>
+        </div>
         <h1 className="mt-2 font-serif text-4xl font-bold leading-tight text-foreground md:text-5xl">{post.title}</h1>
         <p className="mt-6 font-sans text-lg text-muted-foreground">{post.description}</p>
         <div className="prose prose-neutral mt-12 max-w-none font-sans text-base leading-relaxed text-foreground">

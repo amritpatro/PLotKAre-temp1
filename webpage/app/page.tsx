@@ -7,7 +7,6 @@ import { ProblemSection } from '@/components/sections/problem'
 import { ServicesSection } from '@/components/sections/services'
 import { PlotVisualizationSection } from '@/components/sections/plot-visualization'
 import { HowItWorksSection } from '@/components/sections/how-it-works'
-import { Plot3DSection } from '@/components/sections/plot-3d-section'
 import { LandUtilisationSection } from '@/components/sections/land-utilisation'
 import { StatisticsSection } from '@/components/sections/statistics'
 import { AvailablePlotsShowcaseSection } from '@/components/sections/available-plots-showcase'
@@ -19,12 +18,12 @@ import { ContactSection } from '@/components/sections/contact'
 import { Footer } from '@/components/footer'
 import { SITE_NAME, canonicalPageUrl } from '@/lib/site-config'
 
-const HOME_TITLE = `${SITE_NAME} — Plot and Property Management in Visakhapatnam | Protect, Grow, and Track Your Asset`
+const HOME_TITLE = `${SITE_NAME} — Property Asset Management in India | Protect, Track, Grow, and Trade`
 
 export const metadata: Metadata = {
   title: HOME_TITLE,
   description:
-    'Protect and grow your vacant plot or apartment in Visakhapatnam with PlotKare. Monthly inspections, 3D land visualization, amenity services, and property listings. Starting Rs 999 per month.',
+    'Protect and grow vacant plots, apartments, flats, and land assets with PlotKare. Starting from Visakhapatnam with inspections, 3D visualization, value tracking, services, and verified listings.',
   alternates: {
     canonical: canonicalPageUrl('/'),
   },
@@ -32,7 +31,7 @@ export const metadata: Metadata = {
     url: canonicalPageUrl('/'),
     title: HOME_TITLE,
     description:
-      'Protect and grow your vacant plot or apartment in Visakhapatnam with PlotKare. Monthly inspections, 3D land visualization, amenity services, and property listings. Starting Rs 999 per month.',
+      'Protect and grow vacant plots, apartments, flats, and land assets with PlotKare. Starting from Visakhapatnam with inspections, 3D visualization, value tracking, services, and verified listings.',
     type: 'website',
     siteName: SITE_NAME,
   },
@@ -40,7 +39,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: HOME_TITLE,
     description:
-      'Protect and grow your vacant plot or apartment in Visakhapatnam with PlotKare. Monthly inspections, 3D land visualization, amenity services, and property listings. Starting Rs 999 per month.',
+      'Protect and grow vacant plots, apartments, flats, and land assets with PlotKare. Starting from Visakhapatnam with inspections, 3D visualization, value tracking, services, and verified listings.',
   },
 }
 
@@ -50,7 +49,6 @@ export default function HomePage() {
       <Navigation />
       <HeroSection />
       <TrustStrip />
-      <Plot3DSection />
       <ProblemSection />
       <ServicesSection />
       <PlotVisualizationSection />

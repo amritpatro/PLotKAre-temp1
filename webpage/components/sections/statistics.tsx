@@ -17,7 +17,7 @@ const pillars = [
   },
   {
     title: 'Corridor familiarity',
-    body: 'Structured around Visakhapatnam growth belts — see dedicated corridor pages for local context and search keywords.',
+    body: 'Structured around local growth corridors first, then expanded through repeatable field workflows for each new city.',
   },
 ]
 
@@ -32,7 +32,7 @@ export function StatisticsSection() {
           transition={{ duration: 0.55 }}
           className="mb-12 text-center font-serif text-3xl font-bold text-foreground md:text-4xl"
         >
-          Visakhapatnam Plot Monitoring Built for Long-Distance Decisions
+          Property Monitoring Built for Long-Distance Decisions
         </motion.h2>
         <motion.div
           initial={{ opacity: 0, y: 30 }}

@@ -53,7 +53,7 @@ export function HowItWorksSection() {
           className="mb-12 text-center"
         >
           <h2 className="font-serif text-4xl font-bold text-white md:text-5xl">
-            How Visakhapatnam Plot Monitoring Works in <span className="text-primary">Five Steps</span>
+            How Property Monitoring Works in <span className="text-primary">Five Steps</span>
           </h2>
         </motion.div>
 

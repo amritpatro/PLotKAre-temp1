@@ -2,6 +2,8 @@ export type BlogPost = {
   slug: string
   title: string
   description: string
+  category: string
+  readTime: string
   datePublished: string
   /** Plain-text paragraphs for SEO-friendly rendering */
   paragraphs: string[]
@@ -9,64 +11,83 @@ export type BlogPost = {
 
 export const BLOG_POSTS: BlogPost[] = [
   {
-    slug: 'nri-plot-inspection-visakhapatnam-guide',
-    title: 'NRI Plot Inspection in Visakhapatnam: What to Demand in Every Field Report',
+    slug: 'how-to-protect-your-plot-from-encroachment-india',
+    title: 'How to Protect Your Plot from Encroachment in India',
     description:
-      'A practical checklist for families abroad who need dated boundary evidence, access-path notes, and escalation language that lawyers can use.',
-    datePublished: '2026-04-18',
+      'A practical owner checklist for boundary evidence, inspection cadence, local escalation, and document hygiene.',
+    category: 'Protection',
+    readTime: '7 min read',
+    datePublished: '2026-05-12',
     paragraphs: [
-      'If you only visit Visakhapatnam once every few years, the weakest link is not the land itself — it is the gap between what relatives remember and what is actually on the ground. A useful inspection cadence closes that gap with repeatable evidence rather than ad-hoc WhatsApp photos.',
-      'Ask for four-sided boundary coverage every cycle, not only the “front” facing the road. Encroachments often start from the rear or side where tree cover hides foot traffic. Geotagged images should be consistent enough that you can compare month to month without guessing angles.',
-      'Access paths matter as much as survey stones. If a neighbour parks equipment across your entry easement, the sooner it is documented, the cheaper it is to unwind. Your report should call out vehicles, building materials, or informal sheds even when they look temporary.',
-      'Finally, pair field reports with document hygiene: EC pulls, tax receipts, and mutation status belong in the same thread so you are not chasing PDFs the week before a sale or refinance.',
+      'Encroachment usually starts quietly. A small access-path shift, temporary storage on one edge, a fence line moved by a few feet, or repeated parking near your frontage can become expensive when nobody records the early evidence.',
+      'The first layer of protection is a clean property file. Keep the sale deed, tax receipts, EC, layout approval, survey sketch, and boundary notes in one place. When a field agent visits, the report should refer to the same plot number and known boundaries every time.',
+      'The second layer is predictable inspection. Monthly or quarterly visits should capture all sides of the asset, approach roads, adjacent construction, visible stones or markers, and any new materials on site. Consistent photo angles matter more than dramatic photos.',
+      'The third layer is escalation discipline. If something changes, separate facts from advice: what changed, when it was seen, what proof exists, and what next action is recommended. That keeps family, counsel, and local representatives working from the same evidence.',
+      'PlotKare turns this routine into a digital trail: visual records, owner notes, road access observations, and document reminders that make remote ownership less dependent on memory or informal updates.',
     ],
   },
   {
-    slug: 'encroachment-prevention-vizag-boundaries',
-    title: 'Encroachment Prevention on Vizag Plots: Boundaries, Trees, and Early Signals',
+    slug: 'ec-certificate-renewal-and-property-document-checklist',
+    title: 'EC Certificate Renewal and Property Document Checklist for Owners',
     description:
-      'How low-drama boundary monitoring saves NRIs from high-drama court timelines — written for coastal Andhra layouts.',
-    datePublished: '2026-04-02',
+      'What property owners should keep ready before inspections, refinancing, family transfer, or marketplace listing.',
+    category: 'Documents',
+    readTime: '6 min read',
+    datePublished: '2026-05-12',
     paragraphs: [
-      'Most encroachment stories do not begin with a bulldozer; they begin with a slightly wider cow path, a bamboo fence that “leans,” or a neighbour’s rainwater channel that quietly shifts the edge line. The goal of monitoring is to catch those moves while they are reversible.',
-      'Tree lines are common hiding spots. A monthly or quarterly walk-through should include photos taken from consistent landmarks — a permanent pole, a corner pylon, or a painted tree — so perspective drift does not fake progress.',
-      'When something changes, the write-up should separate facts from recommendations: what was seen, when, and what options exist (survey re-marking, panchayat notice, counsel letter). That separation keeps families from arguing about interpretation when stress is high.',
+      'An encumbrance certificate is only one part of a healthy property file. Owners should also track tax payments, mutation status, layout references, identity links, and any previous legal notices or survey reports.',
+      'The mistake most owners make is waiting until a sale, loan, or dispute to find documents. By then, missing files create delay and weaken negotiating power. A living digital vault should be updated before urgency arrives.',
+      'Build a recurring review rhythm. Once a quarter, confirm whether taxes are paid, whether any new encumbrance search is needed, and whether the latest inspection report matches the documents on file.',
+      'For co-owned properties, store authority notes clearly. Who can speak to an agent, order a survey, approve a listing, or contact counsel? This prevents delays when one owner is outside the city or abroad.',
+      'A property asset becomes more valuable when its paperwork is ready. Field evidence shows what is on the ground; document hygiene proves the owner can act when needed.',
     ],
   },
   {
-    slug: 'andhra-pradesh-land-documents-checklist',
-    title: 'Andhra Pradesh Land Documents Checklist for Out-of-Town Owners',
+    slug: 'from-vizag-launch-to-national-property-management',
+    title: 'From Vizag Launch to National Property Management: How PlotKare Scales',
     description:
-      'Sale deed, patta, encumbrance certificate, tax receipts, and mutation — how to keep them current without flying home each quarter.',
-    datePublished: '2026-03-20',
+      'Why a local-first operating model can expand across India for plots, apartments, flats, and land assets.',
+    category: 'Market',
+    readTime: '5 min read',
+    datePublished: '2026-05-12',
     paragraphs: [
-      'Treat documents like infrastructure: if they are stale, every other decision becomes slower. EC validity windows, municipal tax cycles, and layout approvals each have different expiries — a single calendar view prevents last-minute panic.',
-      'Link documents to the same plot file your inspections use. When a buyer or banker asks for proof, you should not be decrypting filenames at midnight in another timezone.',
-      'If you co-own with siblings, write down who is authorised to instruct surveyors or counsel. Ambiguity there is more expensive than a few hours of lawyer time up front.',
+      'Property management in India cannot be built only as software. Owners need a digital layer, but they also need local field evidence, document workflows, and verified marketplace readiness.',
+      'A launch market gives the platform a disciplined operating model: inspection routes, report templates, service partner onboarding, local pricing, owner communication, and escalation playbooks.',
+      'Once those workflows are repeatable, the same product can serve more asset types. A vacant plot needs boundary and access monitoring. An apartment needs association, maintenance, rental, and document visibility. A flat needs occupancy, repair, and resale readiness.',
+      'The core idea stays the same: protect the asset, track its value and status, grow it through optional services, and prepare it for verified buying or selling when the owner is ready.',
+      'This is why the map experience matters. It tells the story of local proof becoming a national property intelligence layer, one asset at a time.',
     ],
   },
   {
-    slug: 'apartment-due-diligence-visakhapatnam-seafront',
-    title: 'Apartment Due Diligence in Visakhapatnam: Seafront Towers vs Inland Inventory',
+    slug: 'digilocker-property-document-verification-guide',
+    title: 'How DigiLocker Can Support Property Document Verification',
     description:
-      'How investors comparing RK Beach corridors to Madhurawada belts can read maintenance, corpus, and coastal exposure risk.',
-    datePublished: '2026-03-05',
+      'A plain-English guide to combining digital identity, owner records, and property files for cleaner transactions.',
+    category: 'Verification',
+    readTime: '6 min read',
+    datePublished: '2026-05-12',
     paragraphs: [
-      'Apartments trade on different risks than open plots: corpus health, sinking fund usage, fire stair pressurisation, and façade maintenance schedules. Ask for the last three AGM minutes before you price optimism into your offer.',
-      'Sea-facing units carry corrosion and wind-load maintenance premiums. A lower ticket price can still be expensive if special assessments are coming for window packs or podium waterproofing.',
-      'Parking allotment, stilt usage, and visitor policies affect resale liquidity. Capture them in writing early, not after you discover a pillar in your deeded slot.',
+      'Digital document systems reduce friction, but they do not replace property due diligence. Owners still need a clear chain between identity, asset records, field evidence, and transaction documents.',
+      'Use digital identity tools to organize what belongs to whom. Then connect those records to the property file: deed copies, tax references, inspection reports, EC records, listing history, and service logs.',
+      'The value is not only storage. The value is speed. When a buyer, lawyer, banker, or family member asks for proof, the owner can share a structured record instead of forwarding scattered files.',
+      'For remote owners, this is especially important. Time zones, family coordination, and unclear filenames slow down decisions. A verified digital property file keeps everyone looking at the same version of the truth.',
+      'PlotKare is designed around that combined view: identity, document reminders, field reports, and asset status in one owner-facing place.',
     ],
   },
   {
-    slug: 'coastal-andhra-plot-pricing-signals-2026',
-    title: 'Coastal Andhra Plot Pricing: Reading Registration Spikes Without Hype',
+    slug: 'ways-to-generate-income-from-vacant-plot-without-building',
+    title: '10 Ways to Generate Income from a Vacant Plot Without Building',
     description:
-      'How to blend registration data, layout infra timing, and corridor narratives when you are not on the ground weekly.',
-    datePublished: '2026-02-14',
+      'A practical look at low-structure income ideas, from temporary leasing to solar, farming, storage, and signage.',
+    category: 'Growth',
+    readTime: '8 min read',
+    datePublished: '2026-05-12',
     paragraphs: [
-      'Registration bursts can be real demand or a single large land assembly — context matters. Pair headline averages with lane-level comps inside the same micro-market.',
-      'Infrastructure timing (ROB completions, beach corridor widening, IT SEZ phases) moves liquidity before it moves headline rates. Track execution photos, not only ribbon-cutting press notes.',
-      'If you cannot visit, insist on dated comparables attached to each valuation note so you can challenge or confirm jumps without emotional pricing.',
+      'A vacant plot does not have to stay idle, but every income idea should begin with permissions, access, fencing, water, power, neighborhood fit, and agreement quality.',
+      'Short-term options can include nursery use, container farming, mushroom kit cultivation, parking, storage, temporary yards, signboard leasing, or event support where local rules allow it.',
+      'Longer-term options can include solar hosting, telecom or EV infrastructure support, warehousing partnerships, managed gardens, or lease-backed development planning. These need stronger contracts and clearer exit terms.',
+      'The owner should compare income with risk. A small monthly return is not worth a boundary dispute, unpaid utility bill, or tenant who becomes hard to remove. Every service needs written terms, dated photos, and periodic inspection.',
+      'The best use of an idle asset is the one that protects future sale value while producing current utility. That is why monitoring, legal checks, and service partner management belong together.',
     ],
   },
 ]

@@ -18,6 +18,7 @@ import {
   type ListingFilter,
   type PublicPlotListing,
 } from '@/lib/public-listings'
+import { withBasePath } from '@/lib/site-config'
 
 const FILTERS: ListingFilter[] = ['All Plots', 'Under 50 Lakhs', 'Above 50 Lakhs', 'Corner Plots']
 
@@ -163,7 +164,7 @@ export default function ListingsPage() {
                   className="overflow-hidden rounded-xl border border-[#E5E7EB] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.08)]"
                 >
                   <div className="relative h-[200px] w-full">
-                    <Image src={plot.imageUrl} alt="" fill className="object-cover" sizes="280px" />
+                    <Image src={withBasePath(plot.imageUrl)} alt="" fill className="object-cover" sizes="280px" />
                   </div>
                   <div className="space-y-3 p-4">
                     <p className="font-mono text-xs text-[#C0392B]">{plot.plotNumber}</p>

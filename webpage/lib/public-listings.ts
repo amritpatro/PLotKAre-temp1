@@ -23,7 +23,30 @@ export type PublicPlotListing = {
 
 export const STORAGE_PUBLIC_LISTINGS = 'plotkare_public_listings'
 
-/** Unsplash imagery — vacant land, layouts, and apartments (no stock watermarks). */
+const LISTING_IMAGES = {
+  plot: '/images/listings/plot-coastal.svg',
+  premiumPlot: '/images/listings/plot-premium.svg',
+  apartment: '/images/listings/apartment-tower.svg',
+  town: '/images/listings/plot-town.svg',
+} as const
+
+function isRemoteImage(src: string) {
+  return /^https?:\/\//i.test(src)
+}
+
+export function getLocalListingImage(listing: {
+  id?: string
+  propertyKind?: PropertyKind
+  premium?: boolean
+  imageUrl?: string
+}) {
+  if (listing.imageUrl && !isRemoteImage(listing.imageUrl)) return listing.imageUrl
+  if (listing.propertyKind === 'apartment') return LISTING_IMAGES.apartment
+  if (listing.premium) return LISTING_IMAGES.premiumPlot
+  if (listing.id?.includes('and') || listing.id?.includes('pnd')) return LISTING_IMAGES.town
+  return LISTING_IMAGES.plot
+}
+
 export const DEFAULT_PUBLIC_LISTINGS: PublicPlotListing[] = [
   {
     id: 'plt-bhp-021',
@@ -36,8 +59,7 @@ export const DEFAULT_PUBLIC_LISTINGS: PublicPlotListing[] = [
     premium: false,
     priceLakhs: 72,
     priceDisplay: '72 Lakhs',
-    imageUrl:
-      'https://images.unsplash.com/photo-1628624747186-d9c6e7c79f8f?w=800&auto=format&fit=crop&q=80',
+    imageUrl: LISTING_IMAGES.plot,
     status: 'Active',
     inquiriesCount: 2,
     propertyKind: 'plot',
@@ -53,8 +75,7 @@ export const DEFAULT_PUBLIC_LISTINGS: PublicPlotListing[] = [
     premium: true,
     priceLakhs: 95,
     priceDisplay: '95 Lakhs',
-    imageUrl:
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop&q=80',
+    imageUrl: LISTING_IMAGES.premiumPlot,
     status: 'Active',
     inquiriesCount: 5,
     propertyKind: 'plot',
@@ -70,8 +91,7 @@ export const DEFAULT_PUBLIC_LISTINGS: PublicPlotListing[] = [
     premium: true,
     priceLakhs: 135,
     priceDisplay: '1.35 Cr',
-    imageUrl:
-      'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&auto=format&fit=crop&q=80',
+    imageUrl: LISTING_IMAGES.apartment,
     status: 'Active',
     inquiriesCount: 3,
     propertyKind: 'apartment',
@@ -89,8 +109,7 @@ export const DEFAULT_PUBLIC_LISTINGS: PublicPlotListing[] = [
     premium: false,
     priceLakhs: 48,
     priceDisplay: '48 Lakhs',
-    imageUrl:
-      'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&auto=format&fit=crop&q=80',
+    imageUrl: LISTING_IMAGES.town,
     status: 'Active',
     inquiriesCount: 1,
     propertyKind: 'plot',
@@ -106,8 +125,7 @@ export const DEFAULT_PUBLIC_LISTINGS: PublicPlotListing[] = [
     premium: false,
     priceLakhs: 68,
     priceDisplay: '68 Lakhs',
-    imageUrl:
-      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&auto=format&fit=crop&q=80',
+    imageUrl: LISTING_IMAGES.town,
     status: 'Active',
     inquiriesCount: 0,
     propertyKind: 'plot',
@@ -142,7 +160,12 @@ function normalizeListing(raw: Record<string, unknown>): PublicPlotListing | nul
     premium,
     priceLakhs,
     priceDisplay: String(raw.priceDisplay ?? base?.priceDisplay ?? `${priceLakhs} Lakhs`),
-    imageUrl: String(raw.imageUrl ?? base?.imageUrl ?? ''),
+    imageUrl: getLocalListingImage({
+      id,
+      propertyKind,
+      premium,
+      imageUrl: String(raw.imageUrl ?? base?.imageUrl ?? ''),
+    }),
     status,
     inquiriesCount: Number(raw.inquiriesCount ?? 0) || 0,
     propertyKind,
@@ -170,7 +193,10 @@ export function loadPublicListings(): PublicPlotListing[] {
 }
 
 export function savePublicListings(listings: PublicPlotListing[]) {
-  localStorage.setItem(STORAGE_PUBLIC_LISTINGS, JSON.stringify(listings))
+  localStorage.setItem(
+    STORAGE_PUBLIC_LISTINGS,
+    JSON.stringify(listings.map((listing) => ({ ...listing, imageUrl: getLocalListingImage(listing) }))),
+  )
   window.dispatchEvent(new Event('plotkare-listings-changed'))
 }
 

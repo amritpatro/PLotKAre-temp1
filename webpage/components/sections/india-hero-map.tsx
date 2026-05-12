@@ -20,7 +20,7 @@ import { cn } from '@/lib/utils'
 
 const VIZAG = { lon: 83.2185, lat: 17.6868 }
 
-/** Illustrative global anchor cities — not client offices or headcounts. */
+/** Illustrative owner-origin cities for the national property network story. */
 const GLOBAL_ANCHORS = [
   { name: 'Houston', lon: -95.3698, lat: 29.7604 },
   { name: 'Dubai', lon: 55.2708, lat: 25.2048 },
@@ -127,11 +127,10 @@ export function IndiaHeroMap() {
   const openDialog = (row: PathRow) => setSelected(row)
 
   return (
-    <div ref={rootRef} className="relative w-full max-w-[560px] justify-self-end lg:max-w-none">
+    <div ref={rootRef} className="relative w-full max-w-[720px] justify-self-start lg:max-w-none">
       <div
         className={cn(
-          'relative overflow-hidden rounded-2xl border border-[#E5E5E5]/90 bg-white/75 shadow-xl backdrop-blur-md',
-          'ring-1 ring-black/[0.04]',
+          'relative overflow-hidden bg-transparent',
         )}
       >
         <svg
@@ -142,8 +141,8 @@ export function IndiaHeroMap() {
         >
           <defs>
             <linearGradient id="plotkareMapBg" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#ffffff" stopOpacity={0.96} />
-              <stop offset="100%" stopColor="#F8F6F3" stopOpacity={0.94} />
+              <stop offset="0%" stopColor="#ffffff" stopOpacity={0.08} />
+              <stop offset="100%" stopColor="#F8F6F3" stopOpacity={0.18} />
             </linearGradient>
             <filter id="apGlow" x="-60%" y="-60%" width="220%" height="220%">
               <feGaussianBlur stdDeviation="2.8" result="blur" />
@@ -268,11 +267,6 @@ export function IndiaHeroMap() {
         </svg>
       </div>
 
-      <p className="mt-3 text-center font-mono text-[10px] leading-snug text-muted-foreground">
-        Boundaries: Natural Earth admin-1 (India). Dashed arcs are example diaspora hubs — not offices or client
-        counts.
-      </p>
-
       <Dialog open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -282,26 +276,25 @@ export function IndiaHeroMap() {
                 {selected && isAndhraPradesh(selected.name, selected.iso) ? (
                   <>
                     <p>
-                      PlotKare visits and coordination are operating from{' '}
-                      <strong className="text-foreground">Visakhapatnam</strong> across coastal Andhra Pradesh today —
-                      this is where inspection rhythm, documentation hygiene, and evidence trails are proven first.
+                      PlotKare starts from <strong className="text-foreground">Visakhapatnam</strong> because that is
+                      where the inspection, documentation, 3D visualization, and marketplace workflow is being proven
+                      first.
                     </p>
                     <p>
-                      Other states follow a public expansion roadmap; we only scale where we can deliver the same
-                      standard of field evidence. Register interest if you want rollout updates — we never imply coverage
-                      we have not launched.
+                      The product is national by design: the same property asset layer can support vacant plots,
+                      apartments, flats, and land parcels as verified local operations expand.
                     </p>
                   </>
                 ) : (
                   <>
                     <p>
-                      PlotKare does not claim full on-ground service in <strong className="text-foreground">{selected?.name}</strong>{' '}
-                      yet. Work is staged from <strong className="text-foreground">Visakhapatnam / Andhra Pradesh</strong>{' '}
-                      outward as we harden playbooks.
+                      <strong className="text-foreground">{selected?.name}</strong> is part of the national property
+                      asset vision. The operating rollout begins from Visakhapatnam and expands state by state with
+                      verified field partners.
                     </p>
                     <p>
-                      Use Contact (or WhatsApp when published) to register interest — we will only reach out about
-                      eligibility and expansion timing.
+                      Owners can register assets early so the marketplace, value tracker, and 3D viewer are ready as
+                      local verification coverage opens.
                     </p>
                   </>
                 )}

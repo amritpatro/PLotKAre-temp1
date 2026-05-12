@@ -10,6 +10,7 @@ import {
   type ListingFilter,
   type PublicPlotListing,
 } from '@/lib/public-listings'
+import { withBasePath } from '@/lib/site-config'
 
 const FILTERS: ListingFilter[] = [
   'All Plots',
@@ -23,7 +24,7 @@ function ListingCard({ plot }: { plot: PublicPlotListing }) {
   return (
     <article className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
       <div className="relative aspect-[16/10] w-full">
-        <Image src={plot.imageUrl} alt="" fill className="object-cover" sizes="(max-width:768px) 100vw, 33vw" />
+        <Image src={withBasePath(plot.imageUrl)} alt="" fill className="object-cover" sizes="(max-width:768px) 100vw, 33vw" />
         <div className="absolute left-3 top-3 flex flex-wrap gap-2">
           <span className="rounded-full bg-black/60 px-2 py-0.5 font-mono text-[10px] text-white">Demo</span>
           {plot.propertyKind === 'apartment' && (

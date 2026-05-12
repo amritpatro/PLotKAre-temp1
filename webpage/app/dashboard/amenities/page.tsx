@@ -13,6 +13,7 @@ import {
   loadActiveAmenityNames,
   saveActiveAmenityNames,
 } from '@/lib/plotkare-storage'
+import { withBasePath } from '@/lib/site-config'
 
 export default function AmenitiesPage() {
   const router = useRouter()
@@ -96,7 +97,7 @@ export default function AmenitiesPage() {
                       <div className="flex gap-4 p-4">
                         <div className="relative h-16 w-20 shrink-0 overflow-hidden rounded-lg">
                           <Image
-                            src={item.image}
+                            src={withBasePath(item.image)}
                             alt=""
                             fill
                             className="object-cover"
@@ -154,7 +155,7 @@ export default function AmenitiesPage() {
                     >
                       <div className="relative h-36 w-full shrink-0">
                         <Image
-                          src={item.image}
+                          src={withBasePath(item.image)}
                           alt=""
                           fill
                           className="object-cover"

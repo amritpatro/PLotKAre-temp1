@@ -12,6 +12,19 @@ export type MarketListing = {
 
 const STORAGE_KEY = 'plotkare_market_listings'
 
+const MARKET_IMAGES = {
+  plot: '/images/listings/plot-coastal.svg',
+  premium: '/images/listings/plot-premium.svg',
+  town: '/images/listings/plot-town.svg',
+} as const
+
+function localMarketImage(listing: Pick<MarketListing, 'id' | 'premiumBadge' | 'imageUrl'>) {
+  if (listing.imageUrl && !/^https?:\/\//i.test(listing.imageUrl)) return listing.imageUrl
+  if (listing.premiumBadge) return MARKET_IMAGES.premium
+  if (listing.id.includes('and') || listing.id.includes('pnd')) return MARKET_IMAGES.town
+  return MARKET_IMAGES.plot
+}
+
 export const DEFAULT_MARKET_LISTINGS: MarketListing[] = [
   {
     id: 'demo-bhp-021',
@@ -21,8 +34,7 @@ export const DEFAULT_MARKET_LISTINGS: MarketListing[] = [
     facing: 'East',
     cornerPlot: true,
     priceLakhs: 72,
-    imageUrl:
-      'https://images.unsplash.com/photo-1628624747186-d9c6e7c79f8f?w=800&auto=format&fit=crop&q=80',
+    imageUrl: MARKET_IMAGES.plot,
   },
   {
     id: 'demo-kmd-008',
@@ -32,8 +44,7 @@ export const DEFAULT_MARKET_LISTINGS: MarketListing[] = [
     facing: 'North',
     priceLakhs: 95,
     premiumBadge: true,
-    imageUrl:
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop&q=80',
+    imageUrl: MARKET_IMAGES.premium,
   },
   {
     id: 'demo-and-034',
@@ -42,8 +53,7 @@ export const DEFAULT_MARKET_LISTINGS: MarketListing[] = [
     sizeSqYards: 150,
     facing: 'West',
     priceLakhs: 48,
-    imageUrl:
-      'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&auto=format&fit=crop&q=80',
+    imageUrl: MARKET_IMAGES.town,
   },
   {
     id: 'demo-pnd-017',
@@ -52,8 +62,7 @@ export const DEFAULT_MARKET_LISTINGS: MarketListing[] = [
     sizeSqYards: 240,
     facing: 'South',
     priceLakhs: 68,
-    imageUrl:
-      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&auto=format&fit=crop&q=80',
+    imageUrl: MARKET_IMAGES.town,
   },
 ]
 
@@ -72,14 +81,20 @@ export function loadMarketListings(): MarketListing[] {
     if (!Array.isArray(parsed) || parsed.length === 0) {
       return [...DEFAULT_MARKET_LISTINGS]
     }
-    return parsed as MarketListing[]
+    return (parsed as MarketListing[]).map((listing) => ({
+      ...listing,
+      imageUrl: localMarketImage(listing),
+    }))
   } catch {
     return [...DEFAULT_MARKET_LISTINGS]
   }
 }
 
 export function saveMarketListings(list: MarketListing[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(list))
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(list.map((listing) => ({ ...listing, imageUrl: localMarketImage(listing) }))),
+  )
   emit()
 }
 

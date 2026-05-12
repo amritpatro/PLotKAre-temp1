@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Cormorant_Garamond, DM_Sans, DM_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { JsonLd } from '@/components/json-ld'
-import { SITE_NAME, canonicalPageUrl, absoluteUrl, getSiteUrl } from '@/lib/site-config'
+import { SITE_NAME, canonicalPageUrl, absoluteUrl, getSiteUrl, withBasePath } from '@/lib/site-config'
 import './globals.css'
 
 const cormorant = Cormorant_Garamond({
@@ -32,18 +32,18 @@ const defaultOgImage = absoluteUrl('/opengraph-default.svg')
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: `${SITE_NAME} — Visakhapatnam plot & apartment oversight`,
+    default: `${SITE_NAME} — Property Asset Management in India`,
     template: `%s | ${SITE_NAME}`,
   },
   description:
-    'Scheduled field visits, boundary photos, and document reminders for plots and select apartments across Visakhapatnam and coastal Andhra — built for NRIs, metro owners, and local investors.',
+    'Protect, track, grow, and trade property assets with PlotKare: inspections, documents, 3D visualization, value tracking, services, and verified listings.',
   keywords: [
-    'Visakhapatnam plot monitoring',
-    'Vizag NRI land management',
-    'Andhra Pradesh plot inspection',
-    'Visakhapatnam apartment due diligence',
-    'coastal Andhra plot encroachment',
-    'Bheemunipatnam plot management',
+    'property asset management India',
+    'plot protection services India',
+    'vacant land monitoring',
+    'apartment management service',
+    '3D property visualization',
+    'verified property marketplace',
   ],
   authors: [{ name: SITE_NAME, url: siteUrl }],
   creator: SITE_NAME,
@@ -52,23 +52,23 @@ export const metadata: Metadata = {
     locale: 'en_IN',
     url: canonicalPageUrl('/'),
     siteName: SITE_NAME,
-    title: `${SITE_NAME} — Visakhapatnam plot & apartment oversight`,
+    title: `${SITE_NAME} — Property Asset Management in India`,
     description:
-      'Inspection-first monitoring, legal document hygiene, and resale-ready evidence for land and apartments near Vizag.',
+      'Inspection-first monitoring, legal document hygiene, 3D visualization, and resale-ready evidence for plots, apartments, flats, and land assets.',
     images: [
       {
         url: defaultOgImage,
         width: 1200,
         height: 630,
-        alt: `${SITE_NAME} — Visakhapatnam plots and apartments`,
+        alt: `${SITE_NAME} property asset management platform`,
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: `${SITE_NAME} — Visakhapatnam plot & apartment oversight`,
+    title: `${SITE_NAME} — Property Asset Management in India`,
     description:
-      'Inspection-first monitoring, legal document hygiene, and resale-ready evidence for land and apartments near Vizag.',
+      'Inspection-first monitoring, legal document hygiene, 3D visualization, and resale-ready evidence for plots, apartments, flats, and land assets.',
     images: [defaultOgImage],
   },
   alternates: {
@@ -77,19 +77,19 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: '/icon-light-32x32.png',
+        url: withBasePath('/icon-light-32x32.png'),
         media: '(prefers-color-scheme: light)',
       },
       {
-        url: '/icon-dark-32x32.png',
+        url: withBasePath('/icon-dark-32x32.png'),
         media: '(prefers-color-scheme: dark)',
       },
       {
-        url: '/icon.svg',
+        url: withBasePath('/icon.svg'),
         type: 'image/svg+xml',
       },
     ],
-    apple: '/apple-icon.png',
+    apple: withBasePath('/apple-icon.png'),
   },
 }
 

@@ -3,78 +3,67 @@
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 
-/** Map + D3 + GSAP isolated: if this chunk fails, hero copy still renders. */
 const IndiaHeroMapLazy = dynamic(() => import('./india-hero-map').then((m) => ({ default: m.IndiaHeroMap })), {
   ssr: false,
-  loading: () => (
-    <div
-      className="h-[min(440px,52vh)] w-full max-w-[560px] animate-pulse rounded-2xl bg-[#F8F6F3] lg:max-w-none"
-      aria-hidden
-    />
-  ),
+  loading: () => <div className="h-[460px] w-full animate-pulse bg-transparent" aria-hidden />,
 })
 
 const pillars = [
-  { title: 'Field evidence', label: 'Geotagged photos each cycle' },
-  { title: 'Legal hygiene', label: 'EC, tax, and deed reminders' },
-  { title: 'Single dashboard', label: 'History you can search anytime' },
-  { title: 'Vizag corridors', label: 'Coastal layouts & growth belts' },
+  { title: 'Protect', label: 'Inspections and evidence' },
+  { title: 'Track', label: 'Value and status' },
+  { title: 'Grow', label: 'Optional services' },
+  { title: 'Trade', label: 'Verified marketplace' },
 ]
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen bg-white pt-20">
-      <div className="mx-auto max-w-[1400px] px-6 lg:px-12">
-        <div className="flex min-h-[calc(100vh-5rem)] min-w-0 flex-col justify-center py-12 lg:grid lg:min-h-[calc(100vh-5rem)] lg:grid-cols-[1fr_minmax(320px,1fr)] lg:items-center lg:gap-14 lg:py-16">
-          <div className="min-w-0 text-[#1a1a1a]">
-            <p className="mb-6 font-mono text-sm font-medium uppercase tracking-widest text-[#8B1538]">
-              Visakhapatnam land &amp; apartment oversight
-            </p>
+    <section className="relative isolate min-h-screen overflow-hidden bg-white pt-20">
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(110deg,#ffffff_0%,#ffffff_45%,#f8f6f3_100%)]" />
+      <div className="pointer-events-none absolute right-[-12%] top-24 -z-10 hidden h-[72%] w-[62%] rounded-full bg-[#8B1538]/[0.035] blur-3xl lg:block" />
 
-            <h1 className="max-w-4xl font-serif text-4xl font-bold leading-[1.12] tracking-tight text-[#1a1a1a] md:text-5xl lg:text-6xl xl:text-7xl">
-              Professional Plot and Property Management in Visakhapatnam
-            </h1>
+      <div className="mx-auto grid min-h-[calc(100svh-5rem)] max-w-[1500px] gap-10 px-6 py-12 lg:grid-cols-[minmax(0,0.92fr)_minmax(460px,1.08fr)] lg:items-center lg:px-12 lg:py-16">
+        <div className="min-w-0 text-[#1a1a1a]">
+          <h1 className="max-w-4xl font-serif text-5xl font-bold leading-[1.02] tracking-tight md:text-6xl xl:text-7xl">
+            Protect, Track, Grow, and Trade Property Assets
+          </h1>
 
-            <p className="mt-6 max-w-2xl font-serif text-2xl font-semibold italic leading-snug text-[#8B1538] md:text-3xl">
-              Your Land Has Value. We Make Sure It Stays That Way.
-            </p>
+          <p className="mt-7 max-w-2xl font-sans text-lg leading-relaxed text-[#5f5f5f] md:text-xl">
+            PlotKare starts from Visakhapatnam and is built to scale across India for anyone who owns a vacant plot,
+            apartment, flat, or land asset. Field evidence, documents, value signals, optional services, and verified
+            listings come together in one digital property layer.
+          </p>
 
-            <p className="mt-8 max-w-2xl font-sans text-lg leading-relaxed text-[#6B6B6B] md:text-xl">
-              <strong className="font-medium text-[#1a1a1a]">NRIs abroad</strong> who rarely fly in,{' '}
-              <strong className="font-medium text-[#1a1a1a]">Indian metro owners</strong> with a second asset
-              in AP, and <strong className="font-medium text-[#1a1a1a]">local investors</strong> who want
-              income or resale optionality — all get the same inspection rhythm, boundary photos, and document
-              trail so decisions are based on facts, not rumours.
-            </p>
-
-            <div className="mt-10 flex flex-wrap gap-6">
-              <Link
-                href="#contact"
-                className="inline-flex items-center justify-center rounded-sm bg-[#8B1538] px-10 py-5 font-sans text-base font-medium text-white transition-all hover:bg-[#8B1538]/90 md:px-12 md:py-6 md:text-lg"
-              >
-                Talk to the team
-              </Link>
-              <Link
-                href="/demo/plot-3d/"
-                className="inline-flex items-center justify-center rounded-sm border border-[#1a1a1a] bg-transparent px-10 py-5 font-sans text-base font-medium text-[#1a1a1a] transition-all hover:bg-[#1a1a1a] hover:text-white md:px-12 md:py-6 md:text-lg"
-              >
-                Open 3D plot demo
-              </Link>
-            </div>
-
-            <div className="mt-16 grid gap-6 border-t border-[#E5E5E5] pt-12 sm:grid-cols-2 lg:grid-cols-4">
-              {pillars.map((p) => (
-                <div key={p.title}>
-                  <p className="font-serif text-lg font-semibold text-[#1a1a1a]">{p.title}</p>
-                  <p className="mt-2 font-sans text-sm text-[#6B6B6B]">{p.label}</p>
-                </div>
-              ))}
-            </div>
+          <div className="mt-9 flex flex-wrap gap-4">
+            <Link
+              href="#plot-layout"
+              className="inline-flex min-h-12 items-center justify-center rounded-sm bg-[#8B1538] px-7 py-3.5 font-sans text-sm font-semibold text-white transition-colors hover:bg-[#75112f] md:text-base"
+            >
+              View Land Viewer
+            </Link>
+            <Link
+              href="/signup/"
+              className="inline-flex min-h-12 items-center justify-center rounded-sm border border-[#1a1a1a] bg-white/70 px-7 py-3.5 font-sans text-sm font-semibold text-[#1a1a1a] transition-colors hover:bg-[#1a1a1a] hover:text-white md:text-base"
+            >
+              Add My Property
+            </Link>
           </div>
 
-          <div className="mt-14 min-w-0 lg:mt-0">
+          <div className="mt-14 grid max-w-3xl grid-cols-2 gap-x-7 gap-y-5 border-t border-[#1a1a1a]/10 pt-8 md:grid-cols-4">
+            {pillars.map((p) => (
+              <div key={p.title}>
+                <p className="font-serif text-xl font-bold text-[#8B1538]">{p.title}</p>
+                <p className="mt-1 font-sans text-sm leading-snug text-[#5f5f5f]">{p.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="relative min-h-[420px] lg:min-h-[590px]">
+          <div className="absolute inset-0 opacity-70 mix-blend-multiply lg:opacity-78">
             <IndiaHeroMapLazy />
           </div>
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-white to-transparent" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-white to-transparent" />
         </div>
       </div>
     </section>

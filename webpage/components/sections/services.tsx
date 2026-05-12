@@ -75,10 +75,10 @@ export function ServicesSection() {
           className="mb-16 text-center"
         >
           <h2 className="font-serif text-4xl font-bold text-foreground md:text-5xl">
-            Visakhapatnam Monthly Plot Inspection, Legal Monitoring &amp; Document Vault
+            Monthly Property Inspection, Legal Monitoring &amp; Document Vault
           </h2>
           <p className="mx-auto mt-4 max-w-2xl font-sans text-lg text-muted-foreground">
-            We act as your eyes, ears, and legal representative on the ground.
+            We act as your eyes, ears, and property operations layer on the ground.
           </p>
         </motion.div>
 

@@ -1,9 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
-import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { ArrowRight, Fence, Leaf, Scale, Sprout, SunMedium, Warehouse } from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 
 type Category = 'All' | 'Income Generation' | 'Protection' | 'Development'
 
@@ -11,62 +17,52 @@ interface Service {
   title: string
   description: string
   category: 'Income Generation' | 'Protection' | 'Development'
-  gradient: string
-  size: 'full' | 'half'
-  imageUrl: string
+  icon: typeof Sprout
+  accent: string
 }
 
 const services: Service[] = [
   {
     title: 'Container Farming Lease',
-    description: 'Generate passive income by leasing your plot for modern container farming operations.',
+    description: 'Lease idle land for modular farming operators after fitment, access, water, and risk checks.',
     category: 'Income Generation',
-    gradient: 'from-emerald-900 to-emerald-700',
-    size: 'full',
-    imageUrl:
-      'https://images.unsplash.com/photo-1530836369250-ef72a3f66bab?w=800&auto=format&fit=crop&q=80',
+    icon: Warehouse,
+    accent: '#2D5A3D',
   },
   {
     title: 'Mushroom Kit Cultivation',
-    description: 'Low-maintenance mushroom cultivation that generates monthly returns.',
+    description: 'Evaluate low-footprint cultivation as an owner-approved add-on where site conditions allow it.',
     category: 'Income Generation',
-    gradient: 'from-amber-900 to-amber-700',
-    size: 'half',
-    imageUrl:
-      'https://images.unsplash.com/photo-1575535468632-345892508d6b?w=800&auto=format&fit=crop&q=80',
+    icon: Sprout,
+    accent: '#8B1538',
   },
   {
     title: 'Solar Panel Hosting',
-    description: 'Host solar panels and earn from clean energy generation.',
+    description: 'Screen open plots for solar hosting suitability, shade exposure, access, and operator interest.',
     category: 'Income Generation',
-    gradient: 'from-slate-800 to-slate-600',
-    size: 'half',
-    imageUrl: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800',
+    icon: SunMedium,
+    accent: '#C9A962',
   },
   {
     title: 'Boundary Fencing Installation',
-    description: 'Professional fencing to secure your plot boundaries and deter encroachment.',
+    description: 'Plan fencing and signboard work so protection is visible before disputes or dumping begin.',
     category: 'Protection',
-    gradient: 'from-zinc-800 to-zinc-600',
-    size: 'half',
-    imageUrl:
-      'https://images.unsplash.com/photo-1628624747186-d9c6e7c79f8f?w=800&auto=format&fit=crop&q=80',
+    icon: Fence,
+    accent: '#1a1a1a',
   },
   {
     title: 'Legal Holding Advisory',
-    description: 'Expert guidance on property laws, tax planning, and estate management.',
+    description: 'Keep holding structure, recurring dues, and documentation hygiene visible to owners and advisors.',
     category: 'Protection',
-    gradient: 'from-stone-800 to-stone-600',
-    size: 'half',
-    imageUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800',
+    icon: Scale,
+    accent: '#8B1538',
   },
   {
     title: 'Plot Resale Assistance',
-    description: 'End-to-end support for selling your plot at the best market value.',
+    description: 'Prepare inspected, photographed, documented assets for verified marketplace listing readiness.',
     category: 'Development',
-    gradient: 'from-indigo-900 to-indigo-700',
-    size: 'full',
-    imageUrl: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800',
+    icon: Leaf,
+    accent: '#2D5A3D',
   },
 ]
 
@@ -74,114 +70,88 @@ const categories: Category[] = ['All', 'Income Generation', 'Protection', 'Devel
 
 export function LandUtilisationSection() {
   const [activeCategory, setActiveCategory] = useState<Category>('All')
+  const [activeService, setActiveService] = useState<Service | null>(null)
 
-  const filteredServices = activeCategory === 'All' 
-    ? services 
-    : services.filter(s => s.category === activeCategory)
+  const filteredServices =
+    activeCategory === 'All' ? services : services.filter((service) => service.category === activeCategory)
 
   return (
-    <section className="bg-white py-24 lg:py-32">
+    <section className="bg-white py-20 lg:py-28">
       <div className="mx-auto max-w-[1400px] px-6 lg:px-12">
-        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mb-12"
+          transition={{ duration: 0.55 }}
+          className="mb-10"
         >
           <h2 className="font-serif text-4xl font-bold text-foreground md:text-5xl">
-            Visakhapatnam Vacant Land Income &amp; Protection <span className="text-primary">Add-Ons</span>
+            Property Income, Protection, and Growth <span className="text-primary">Add-Ons</span>
           </h2>
           <p className="mt-4 max-w-2xl font-sans text-lg text-muted-foreground">
-            Beyond monitoring — optional value-add services for your vacant plot.
+            Optional services sit behind the core property record. Owners can explore them without turning the landing
+            page into a heavy image gallery.
           </p>
         </motion.div>
 
-        {/* Filter Tabs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="mb-10 flex flex-wrap gap-4"
-        >
+        <div className="mb-8 flex flex-wrap gap-4">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => setActiveCategory(category)}
               className={`relative pb-2 font-sans text-sm font-medium transition-colors ${
-                activeCategory === category ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
+                activeCategory === category ? 'text-foreground' : 'text-muted-foreground'
               }`}
             >
               {category}
               {activeCategory === category && (
-                <motion.div
-                  layoutId="activeCategory"
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
-                />
+                <motion.div layoutId="activeCategory" className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
               )}
             </button>
           ))}
-        </motion.div>
+        </div>
 
-        {/* Bento Grid */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeCategory}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="grid gap-6 md:grid-cols-2"
-          >
-            {filteredServices.map((service, index) => (
-              <motion.div
+        <motion.div layout className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {filteredServices.map((service) => {
+            const Icon = service.icon
+            return (
+              <motion.button
+                layout
                 key={service.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ scale: 0.98 }}
-                className={`group relative overflow-hidden rounded-xl bg-gradient-to-br ${service.gradient} p-8 ${
-                  service.size === 'full' ? 'md:col-span-2' : ''
-                }`}
+                type="button"
+                onClick={() => setActiveService(service)}
+                className="min-h-[230px] rounded-lg border border-border bg-secondary p-7 text-left shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
               >
-                <Image
-                  src={service.imageUrl}
-                  alt=""
-                  fill
-                  className="object-cover"
-                  sizes={service.size === 'full' ? '(max-width: 768px) 100vw, 1200px' : '(max-width: 768px) 100vw, 600px'}
-                />
                 <div
-                  className="absolute inset-0 z-[1] bg-gradient-to-b from-[rgba(0,0,0,0.3)] to-[rgba(0,0,0,0.75)]"
-                  aria-hidden
-                />
-
-                <div className="relative z-[2]">
-                  {/* Category Pill */}
-                  <span className="mb-4 inline-block rounded-full bg-white/10 px-3 py-1 font-mono text-xs text-white/80">
-                    {service.category}
-                  </span>
-
-                  <h3 className="font-serif text-2xl font-bold text-white md:text-3xl">
-                    {service.title}
-                  </h3>
-                  <p className="mt-3 max-w-md font-sans text-sm leading-relaxed text-white/70">
-                    {service.description}
-                  </p>
-
-                  <div className="mt-6 flex items-center gap-2 text-accent transition-transform group-hover:translate-x-2">
-                    <span className="font-sans text-sm font-medium">Learn more</span>
-                    <ArrowRight className="h-4 w-4" />
-                  </div>
+                  className="mb-5 flex h-12 w-12 items-center justify-center rounded-sm"
+                  style={{ backgroundColor: `${service.accent}18`, color: service.accent }}
+                >
+                  <Icon className="h-6 w-6" />
                 </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </AnimatePresence>
+                <p className="font-mono text-[10px] uppercase tracking-wide text-muted-foreground">{service.category}</p>
+                <h3 className="mt-3 font-serif text-2xl font-bold leading-tight text-foreground">{service.title}</h3>
+                <p className="mt-3 font-sans text-sm leading-relaxed text-muted-foreground">{service.description}</p>
+                <div className="mt-5 flex items-center gap-2 text-primary">
+                  <span className="font-sans text-sm font-semibold">Open details</span>
+                  <ArrowRight className="h-4 w-4" />
+                </div>
+              </motion.button>
+            )
+          })}
+        </motion.div>
       </div>
+
+      <Dialog open={!!activeService} onOpenChange={(open) => !open && setActiveService(null)}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{activeService?.title}</DialogTitle>
+            <DialogDescription className="pt-2 font-sans text-sm leading-relaxed">
+              {activeService?.description} PlotKare treats this as an optional service after the property record,
+              inspection cadence, and owner approvals are clear.
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </section>
   )
 }

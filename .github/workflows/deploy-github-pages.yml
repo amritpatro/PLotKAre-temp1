@@ -27,6 +27,9 @@ jobs:
 
       - name: Install and build
         working-directory: webpage
+        env:
+          NEXT_PUBLIC_BASE_PATH: /PLotKAre-temp1
+          NEXT_PUBLIC_SITE_URL: https://amritpatro.github.io
         run: |
           npm ci
           npm run build:github
@@ -37,7 +40,7 @@ jobs:
         id: pages_root
         run: |
           set -e
-          BASE="PlotCaRe-temp"
+          BASE="PLotKAre-temp1"
           if [ -f webpage/out/index.html ]; then
             echo "dir=webpage/out" >> "$GITHUB_OUTPUT"
             echo "Using webpage/out (flat export)"

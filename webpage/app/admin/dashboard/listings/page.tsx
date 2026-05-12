@@ -13,6 +13,7 @@ import {
   DEFAULT_PUBLIC_LISTINGS,
   loadPublicListings,
   savePublicListings,
+  getLocalListingImage,
   type PublicPlotListing,
 } from '@/lib/public-listings'
 import {
@@ -102,8 +103,7 @@ export default function AdminListingsPage() {
         premium: false,
         priceLakhs: lakhs,
         priceDisplay: lakhs >= 100 ? `${lakhs % 100 === 0 ? lakhs / 100 : (lakhs / 100).toFixed(2)} Cr` : `${lakhs} Lakhs`,
-        imageUrl:
-          'https://images.unsplash.com/photo-1628624747186-d9c6e7c79f8f?w=800&auto=format&fit=crop&q=80',
+        imageUrl: getLocalListingImage({ propertyKind: 'plot' }),
         status: 'Active',
         inquiriesCount: 0,
         propertyKind: 'plot',
@@ -124,8 +124,7 @@ export default function AdminListingsPage() {
         premium: false,
         priceLakhs: lakhs,
         priceDisplay: lakhs >= 100 ? `${lakhs % 100 === 0 ? lakhs / 100 : (lakhs / 100).toFixed(2)} Cr` : `${lakhs} Lakhs`,
-        imageUrl:
-          'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&auto=format&fit=crop&q=80',
+        imageUrl: getLocalListingImage({ propertyKind: 'apartment' }),
         status: 'Active',
         inquiriesCount: 0,
         propertyKind: 'apartment',

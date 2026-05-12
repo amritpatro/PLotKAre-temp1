@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
+import { BadgeCheck } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -17,6 +18,7 @@ import {
   loadPublicListings,
   type PublicPlotListing,
 } from '@/lib/public-listings'
+import { withBasePath } from '@/lib/site-config'
 
 const CRIMSON = '#C0392B'
 const GOLD = '#F59E0B'
@@ -112,7 +114,7 @@ function PlotCard({
       className="group relative h-[420px] overflow-hidden rounded-2xl border border-white/10 shadow-xl"
     >
       <Image
-        src={plot.imageUrl}
+        src={withBasePath(plot.imageUrl)}
         alt={`${plot.propertyKind === 'apartment' ? 'Apartment' : 'Plot'} listing ${plot.plotNumber} — ${plot.location}, Visakhapatnam area (demo)`}
         fill
         className="object-cover transition-[filter,transform] duration-300 group-hover:brightness-[1.08]"
@@ -125,8 +127,9 @@ function PlotCard({
       />
       <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 p-5 md:p-6">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-full bg-white/15 px-2.5 py-1 font-sans text-[10px] font-semibold uppercase tracking-wide text-white/90">
-            Demo listing · verify on site
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 font-sans text-[10px] font-semibold uppercase tracking-wide text-white/90">
+            <BadgeCheck className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
+            PlotKare Verified
           </span>
           {plot.propertyKind === 'apartment' && (
             <span className="rounded-full border border-white/25 bg-black/40 px-2.5 py-1 font-sans text-[10px] font-semibold uppercase tracking-wide text-white/80">
@@ -224,11 +227,11 @@ export function AvailablePlotsShowcaseSection() {
           className="mb-12 text-center"
         >
           <h2 className="font-serif text-4xl font-bold text-white md:text-5xl">
-            Visakhapatnam Open Plots &amp; Sample Apartments
+            Verified Property Marketplace Preview
           </h2>
           <p className="mt-4 font-sans text-lg text-white/55">
-            Demo inventory for layout — use <strong className="font-medium text-white/75">View in 3D</strong> on any card
-            for the public WebGL preview, or browse the full hub on the listings page.
+            Browse sample plots and apartments with PlotKare verified status, 3D previews, and inquiry tools before the
+            public marketplace goes live.
           </p>
         </motion.div>
 
@@ -292,7 +295,7 @@ export function AvailablePlotsShowcaseSection() {
             <div className="space-y-5 pt-2">
               <div className="relative aspect-[16/10] w-full overflow-hidden rounded-lg">
                 <Image
-                  src={detailPlot.imageUrl}
+                  src={withBasePath(detailPlot.imageUrl)}
                   alt={`${detailPlot.propertyKind === 'apartment' ? 'Apartment' : 'Plot'} listing ${detailPlot.plotNumber} — ${detailPlot.location} (demo)`}
                   fill
                   className="object-cover"
