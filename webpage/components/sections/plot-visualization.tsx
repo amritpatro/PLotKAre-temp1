@@ -27,9 +27,9 @@ export function PlotVisualizationSection() {
             transition={{ duration: 0.6 }}
           >
             <h2 className="font-serif text-4xl font-bold leading-tight text-foreground md:text-5xl">
-              See Your Plot.
+              Visakhapatnam Plot Map &amp; Status View
               <br />
-              <span className="text-primary">Anywhere in the World.</span>
+              <span className="text-primary">Built for Remote Owners.</span>
             </h2>
             <p className="mt-6 max-w-md font-sans text-lg leading-relaxed text-muted-foreground">
               A living map of your property — boundaries, agent footprints, and status 

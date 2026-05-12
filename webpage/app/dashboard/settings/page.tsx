@@ -12,7 +12,7 @@ export default function SettingsPage() {
   const fileRef = useRef<HTMLInputElement>(null)
   const [fullName] = useState('Ravi Kumar')
   const [email] = useState('temp@temp.temp')
-  const [phone] = useState('+91 98765 43210')
+  const [phone] = useState('(Not provided)')
   const [city] = useState('Visakhapatnam')
 
   const [currentPassword, setCurrentPassword] = useState('')

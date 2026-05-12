@@ -23,7 +23,8 @@ const services: Service[] = [
     category: 'Income Generation',
     gradient: 'from-emerald-900 to-emerald-700',
     size: 'full',
-    imageUrl: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800',
+    imageUrl:
+      'https://images.unsplash.com/photo-1530836369250-ef72a3f66bab?w=800&auto=format&fit=crop&q=80',
   },
   {
     title: 'Mushroom Kit Cultivation',
@@ -31,7 +32,8 @@ const services: Service[] = [
     category: 'Income Generation',
     gradient: 'from-amber-900 to-amber-700',
     size: 'half',
-    imageUrl: '/images/mushroom-kit.jpg',
+    imageUrl:
+      'https://images.unsplash.com/photo-1575535468632-345892508d6b?w=800&auto=format&fit=crop&q=80',
   },
   {
     title: 'Solar Panel Hosting',
@@ -47,7 +49,8 @@ const services: Service[] = [
     category: 'Protection',
     gradient: 'from-zinc-800 to-zinc-600',
     size: 'half',
-    imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800',
+    imageUrl:
+      'https://images.unsplash.com/photo-1628624747186-d9c6e7c79f8f?w=800&auto=format&fit=crop&q=80',
   },
   {
     title: 'Legal Holding Advisory',
@@ -88,7 +91,7 @@ export function LandUtilisationSection() {
           className="mb-12"
         >
           <h2 className="font-serif text-4xl font-bold text-foreground md:text-5xl">
-            We Grow Your Land&apos;s <span className="text-primary">Potential</span>
+            Visakhapatnam Vacant Land Income &amp; Protection <span className="text-primary">Add-Ons</span>
           </h2>
           <p className="mt-4 max-w-2xl font-sans text-lg text-muted-foreground">
             Beyond monitoring — optional value-add services for your vacant plot.

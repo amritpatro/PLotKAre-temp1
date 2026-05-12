@@ -57,6 +57,7 @@ export const PRICE_TILES = [
   { label: '90 Lakhs', lakhs: 90 },
   { label: '1 Cr', lakhs: 100 },
   { label: '1.25 Cr', lakhs: 125 },
+  { label: '1.35 Cr', lakhs: 135 },
   { label: '1.5 Cr', lakhs: 150 },
   { label: '2 Cr', lakhs: 200 },
 ] as const

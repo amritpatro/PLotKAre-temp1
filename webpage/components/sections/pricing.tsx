@@ -87,7 +87,7 @@ export function PricingSection() {
           className="mb-12 text-center"
         >
           <h2 className="font-serif text-4xl font-bold text-foreground md:text-5xl">
-            Simple, <span className="text-primary">Transparent</span> Pricing
+            Visakhapatnam Plot Monitoring <span className="text-primary">Plans &amp; Pricing</span>
           </h2>
         </motion.div>
 

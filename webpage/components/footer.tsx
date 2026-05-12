@@ -19,11 +19,11 @@ const footerLinks = {
     { label: 'Income Generation', href: '#services' },
   ],
   resources: [
-    { label: 'Sample Report', href: '#' },
-    { label: 'Pricing Guide', href: '#' },
-    { label: 'NRI FAQ', href: '#' },
-    { label: 'AP RERA Info', href: '#' },
-    { label: 'Blog', href: '#' },
+    { label: 'Plots & apartments', href: '/listings/' },
+    { label: '3D plot demo', href: '/demo/plot-3d/' },
+    { label: 'Blog', href: '/blog/' },
+    { label: 'Bheemunipatnam', href: '/corridors/bheemunipatnam-plot-management/' },
+    { label: 'Madhurawada', href: '/corridors/madhurawada-land-monitoring/' },
   ],
   legal: [
     { label: 'Privacy Policy', href: '#' },
@@ -93,10 +93,10 @@ export function Footer() {
                 Siripuram, Visakhapatnam 530003
               </p>
               <p className="font-sans text-sm text-white/60">
-                +91 891 234 5678
-              </p>
-              <p className="font-sans text-sm text-white/60">
-                hello@plotkare.in
+                <a href="mailto:hello@plotkare.in" className="hover:text-white">
+                  hello@plotkare.in
+                </a>{' '}
+                · callback on request
               </p>
             </div>
             

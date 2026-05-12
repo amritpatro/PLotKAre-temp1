@@ -8,6 +8,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import type { Facing } from '@/lib/plotkare-storage'
+import type { PropertyKind } from '@/lib/public-listings'
 import {
   DEFAULT_PUBLIC_LISTINGS,
   loadPublicListings,
@@ -37,11 +38,29 @@ export default function AdminListingsPage() {
 
   const [plotNumber, setPlotNumber] = useState('')
   const [location, setLocation] = useState<VizagLocation>(VIZAG_LOCATIONS[0])
+  const [listingKind, setListingKind] = useState<PropertyKind>('plot')
   const [sizeTile, setSizeTile] = useState<(typeof SIZE_TILES)[number] | null>(null)
   const [customSq, setCustomSq] = useState('')
+  const [aptSizeLabel, setAptSizeLabel] = useState('')
+  const [aptBhk, setAptBhk] = useState('')
+  const [aptFloor, setAptFloor] = useState('')
   const [priceLabel, setPriceLabel] = useState<(typeof PRICE_TILES)[number]['label'] | null>(null)
   const [facing, setFacing] = useState<Facing>('East')
   const [corner, setCorner] = useState(false)
+
+  const resetAddForm = () => {
+    setPlotNumber('')
+    setListingKind('plot')
+    setLocation(VIZAG_LOCATIONS[0])
+    setSizeTile(null)
+    setCustomSq('')
+    setAptSizeLabel('')
+    setAptBhk('')
+    setAptFloor('')
+    setPriceLabel(null)
+    setFacing('East')
+    setCorner(false)
+  }
 
   const refresh = () => {
     const r = loadPublicListings()
@@ -66,32 +85,58 @@ export default function AdminListingsPage() {
 
   const addListing = (e: React.FormEvent) => {
     e.preventDefault()
-    const sq = sizeTile ? parseSq(sizeTile, customSq) : null
     const lakhs = PRICE_TILES.find((p) => p.label === priceLabel)?.lakhs
-    if (!plotNumber.trim() || sq == null || lakhs == null || !sizeTile) return
-    const row: PublicPlotListing = {
-      id: `new-${Date.now()}`,
-      plotNumber: plotNumber.trim(),
-      location,
-      sizeSqYards: sq,
-      sizeLabel: `${sq} sq yards`,
-      facing,
-      cornerPlot: corner,
-      premium: false,
-      priceLakhs: lakhs,
-      priceDisplay: lakhs >= 100 ? `${lakhs / 100} Cr` : `${lakhs} Lakhs`,
-      imageUrl: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800',
-      status: 'Active',
-      inquiriesCount: 0,
+    if (!plotNumber.trim() || lakhs == null) return
+
+    if (listingKind === 'plot') {
+      const sq = sizeTile ? parseSq(sizeTile, customSq) : null
+      if (sq == null || !sizeTile) return
+      const row: PublicPlotListing = {
+        id: `new-${Date.now()}`,
+        plotNumber: plotNumber.trim(),
+        location,
+        sizeSqYards: sq,
+        sizeLabel: `${sq} sq yards`,
+        facing,
+        cornerPlot: corner,
+        premium: false,
+        priceLakhs: lakhs,
+        priceDisplay: lakhs >= 100 ? `${lakhs % 100 === 0 ? lakhs / 100 : (lakhs / 100).toFixed(2)} Cr` : `${lakhs} Lakhs`,
+        imageUrl:
+          'https://images.unsplash.com/photo-1628624747186-d9c6e7c79f8f?w=800&auto=format&fit=crop&q=80',
+        status: 'Active',
+        inquiriesCount: 0,
+        propertyKind: 'plot',
+      }
+      persist([row, ...rows])
+    } else {
+      const sizeLabel = aptSizeLabel.trim()
+      const bhkN = parseInt(aptBhk, 10)
+      if (!sizeLabel || !Number.isFinite(bhkN) || bhkN < 1) return
+      const row: PublicPlotListing = {
+        id: `new-${Date.now()}`,
+        plotNumber: plotNumber.trim(),
+        location,
+        sizeSqYards: 0,
+        sizeLabel,
+        facing,
+        cornerPlot: false,
+        premium: false,
+        priceLakhs: lakhs,
+        priceDisplay: lakhs >= 100 ? `${lakhs % 100 === 0 ? lakhs / 100 : (lakhs / 100).toFixed(2)} Cr` : `${lakhs} Lakhs`,
+        imageUrl:
+          'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&auto=format&fit=crop&q=80',
+        status: 'Active',
+        inquiriesCount: 0,
+        propertyKind: 'apartment',
+        bhk: bhkN,
+        floorLabel: aptFloor.trim() || undefined,
+      }
+      persist([row, ...rows])
     }
-    persist([row, ...rows])
+
     setAddOpen(false)
-    setPlotNumber('')
-    setSizeTile(null)
-    setCustomSq('')
-    setPriceLabel(null)
-    setFacing('East')
-    setCorner(false)
+    resetAddForm()
   }
 
   const markSold = (id: string) => {
@@ -111,7 +156,10 @@ export default function AdminListingsPage() {
           ? {
               ...r,
               priceLakhs: lakhs,
-              priceDisplay: lakhs >= 100 ? `${lakhs / 100} Cr` : `${lakhs} Lakhs`,
+              priceDisplay:
+                lakhs >= 100
+                  ? `${lakhs % 100 === 0 ? lakhs / 100 : Number((lakhs / 100).toFixed(2))} Cr`
+                  : `${lakhs} Lakhs`,
             }
           : r,
       ),
@@ -128,7 +176,10 @@ export default function AdminListingsPage() {
         </div>
         <button
           type="button"
-          onClick={() => setAddOpen(true)}
+          onClick={() => {
+            resetAddForm()
+            setAddOpen(true)
+          }}
           className="rounded-lg bg-[#C0392B] px-4 py-2 font-sans text-sm font-semibold text-white"
         >
           Add Listing
@@ -139,7 +190,8 @@ export default function AdminListingsPage() {
         <table className="w-full min-w-[800px] text-left text-sm">
           <thead>
             <tr className="border-b border-[#E5E7EB] font-mono text-xs uppercase text-[#9CA3AF]">
-              <th className="px-3 py-3">Plot #</th>
+              <th className="px-3 py-3">Type</th>
+              <th className="px-3 py-3">Ref #</th>
               <th className="px-3 py-3">Location</th>
               <th className="px-3 py-3">Size</th>
               <th className="px-3 py-3">Price</th>
@@ -151,6 +203,9 @@ export default function AdminListingsPage() {
           <tbody className="divide-y divide-[#F3F4F6]">
             {rows.map((r) => (
               <tr key={r.id} className="font-sans text-[#1F2937]">
+                <td className="px-3 py-3 text-[#6B7280]">
+                  {r.propertyKind === 'apartment' ? 'Apt' : 'Plot'}
+                </td>
                 <td className="px-3 py-3 font-mono text-[#C0392B]">{r.plotNumber}</td>
                 <td className="px-3 py-3 text-[#6B7280]">{r.location}</td>
                 <td className="px-3 py-3">{r.sizeLabel}</td>
@@ -193,14 +248,41 @@ export default function AdminListingsPage() {
         </table>
       </div>
 
-      <Dialog open={addOpen} onOpenChange={setAddOpen}>
+      <Dialog
+        open={addOpen}
+        onOpenChange={(o) => {
+          setAddOpen(o)
+          if (!o) resetAddForm()
+        }}
+      >
         <DialogContent className="max-h-[90vh] overflow-y-auto border-[#E5E7EB] bg-white sm:max-w-lg">
           <DialogHeader>
             <DialogTitle className="font-serif text-[#1F2937]">Add listing</DialogTitle>
           </DialogHeader>
           <form onSubmit={addListing} className="space-y-4 pt-2">
             <div>
-              <label className="font-mono text-xs text-[#6B7280]">Plot number</label>
+              <span className="font-mono text-xs text-[#6B7280]">Listing type</span>
+              <div className="mt-2 flex gap-2">
+                {(['plot', 'apartment'] as const).map((k) => (
+                  <button
+                    key={k}
+                    type="button"
+                    onClick={() => setListingKind(k)}
+                    className={`rounded-full border px-4 py-1.5 font-sans text-xs capitalize ${
+                      listingKind === k
+                        ? 'border-[#C0392B] bg-[#FFF1F2] text-[#C0392B]'
+                        : 'border-[#D1D5DB] text-[#6B7280]'
+                    }`}
+                  >
+                    {k}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="font-mono text-xs text-[#6B7280]">
+                {listingKind === 'apartment' ? 'Unit reference' : 'Plot number'}
+              </label>
               <input
                 value={plotNumber}
                 onChange={(e) => setPlotNumber(e.target.value)}
@@ -222,34 +304,72 @@ export default function AdminListingsPage() {
                 ))}
               </select>
             </div>
-            <div>
-              <label className="font-mono text-xs text-[#6B7280]">Size</label>
-              <div className="mt-2 grid max-h-36 grid-cols-3 gap-1 overflow-y-auto sm:grid-cols-4">
-                {SIZE_TILES.map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => setSizeTile(t)}
-                    className={`rounded border px-1 py-2 font-mono text-[10px] ${
-                      sizeTile === t
-                        ? 'border-[#C0392B] bg-[#FFF1F2] text-[#C0392B]'
-                        : 'border-[#D1D5DB]'
-                    }`}
-                  >
-                    {t}
-                  </button>
-                ))}
+            {listingKind === 'plot' ? (
+              <div>
+                <label className="font-mono text-xs text-[#6B7280]">Size (sq yards)</label>
+                <div className="mt-2 grid max-h-36 grid-cols-3 gap-1 overflow-y-auto sm:grid-cols-4">
+                  {SIZE_TILES.map((t) => (
+                    <button
+                      key={t}
+                      type="button"
+                      onClick={() => setSizeTile(t)}
+                      className={`rounded border px-1 py-2 font-mono text-[10px] ${
+                        sizeTile === t
+                          ? 'border-[#C0392B] bg-[#FFF1F2] text-[#C0392B]'
+                          : 'border-[#D1D5DB]'
+                      }`}
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
+                {sizeTile === 'Custom' && (
+                  <input
+                    type="number"
+                    value={customSq}
+                    onChange={(e) => setCustomSq(e.target.value)}
+                    className="mt-2 w-full rounded-lg border border-[#D1D5DB] px-3 py-2"
+                    placeholder="Sq yards"
+                  />
+                )}
               </div>
-              {sizeTile === 'Custom' && (
-                <input
-                  type="number"
-                  value={customSq}
-                  onChange={(e) => setCustomSq(e.target.value)}
-                  className="mt-2 w-full rounded-lg border border-[#D1D5DB] px-3 py-2"
-                  placeholder="Sq yards"
-                />
-              )}
-            </div>
+            ) : (
+              <>
+                <div>
+                  <label className="font-mono text-xs text-[#6B7280]">Carpet / super built-up label</label>
+                  <input
+                    value={aptSizeLabel}
+                    onChange={(e) => setAptSizeLabel(e.target.value)}
+                    className="mt-1 w-full rounded-lg border border-[#D1D5DB] px-3 py-2 font-sans text-sm"
+                    placeholder="e.g. 1,650 sq ft"
+                    required
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="font-mono text-xs text-[#6B7280]">BHK</label>
+                    <input
+                      type="number"
+                      min={1}
+                      value={aptBhk}
+                      onChange={(e) => setAptBhk(e.target.value)}
+                      className="mt-1 w-full rounded-lg border border-[#D1D5DB] px-3 py-2"
+                      placeholder="2"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="font-mono text-xs text-[#6B7280]">Floor (optional)</label>
+                    <input
+                      value={aptFloor}
+                      onChange={(e) => setAptFloor(e.target.value)}
+                      className="mt-1 w-full rounded-lg border border-[#D1D5DB] px-3 py-2 font-sans text-sm"
+                      placeholder="12th floor"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
             <div>
               <label className="font-mono text-xs text-[#6B7280]">Price</label>
               <div className="mt-2 grid max-h-36 grid-cols-3 gap-1 overflow-y-auto sm:grid-cols-4">
@@ -288,18 +408,20 @@ export default function AdminListingsPage() {
                 ))}
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="font-mono text-xs text-[#6B7280]">Corner plot</span>
-              <button
-                type="button"
-                onClick={() => setCorner(!corner)}
-                className={`rounded-full border px-4 py-1.5 text-xs ${
-                  corner ? 'border-[#C0392B] bg-[#FFF1F2] text-[#C0392B]' : 'border-[#D1D5DB]'
-                }`}
-              >
-                {corner ? 'Yes' : 'No'}
-              </button>
-            </div>
+            {listingKind === 'plot' && (
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-xs text-[#6B7280]">Corner plot</span>
+                <button
+                  type="button"
+                  onClick={() => setCorner(!corner)}
+                  className={`rounded-full border px-4 py-1.5 text-xs ${
+                    corner ? 'border-[#C0392B] bg-[#FFF1F2] text-[#C0392B]' : 'border-[#D1D5DB]'
+                  }`}
+                >
+                  {corner ? 'Yes' : 'No'}
+                </button>
+              </div>
+            )}
             <button type="submit" className="w-full rounded-lg bg-[#C0392B] py-2.5 font-semibold text-white">
               Save
             </button>

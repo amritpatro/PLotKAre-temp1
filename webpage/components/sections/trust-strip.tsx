@@ -1,13 +1,13 @@
 'use client'
 
+/** Service-oriented copy only — no third-party certifications or headcounts we cannot cite. */
 const trustItems = [
-  'Registered under AP RERA',
-  'ISO Process Standards',
-  'Trusted by NRIs across USA, UK, UAE & Australia',
-  '5-Year Track Record',
-  'All Agents Background-Verified',
-  '100% Digital Reports',
-  'No Subcontracting',
+  'Scheduled field visits with geotagged photos',
+  'Boundary and access-path checks each cycle',
+  'Digital report archive you can share with family',
+  'Document due-date reminders (tax, EC, registrations)',
+  'One coordinator per property file',
+  'Transparent pricing tiers on the site',
 ]
 
 export function TrustStrip() {
@@ -16,9 +16,7 @@ export function TrustStrip() {
       <div className="animate-marquee flex whitespace-nowrap">
         {[...trustItems, ...trustItems].map((item, index) => (
           <span key={index} className="flex items-center">
-            <span className="px-8 font-sans text-sm font-medium text-foreground/80">
-              {item}
-            </span>
+            <span className="px-8 font-sans text-sm font-medium text-zinc-800">{item}</span>
             <span className="text-primary/60">•</span>
           </span>
         ))}

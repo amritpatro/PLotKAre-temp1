@@ -1,12 +1,13 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import { Plot3DScene } from '@/components/plot-3d-scene'
 import { CheckCircle2 } from 'lucide-react'
 
 export function Plot3DSection() {
   return (
-    <section id="3d-plot" className="bg-charcoal py-24 lg:py-32">
+    <section id="3d-plot" className="bg-charcoal py-16 lg:py-24">
       <div className="mx-auto max-w-[1400px] px-6 lg:px-12">
         {/* Header */}
         <motion.div
@@ -17,10 +18,14 @@ export function Plot3DSection() {
           className="mb-16 text-center"
         >
           <h2 className="font-serif text-4xl font-bold text-white md:text-5xl">
-            See Your Plot. <span className="text-accent">Anywhere in the World.</span>
+            Interactive Visakhapatnam Plot <span className="text-accent">3D Viewer</span>
           </h2>
           <p className="mt-4 mx-auto max-w-2xl font-sans text-lg text-white/60">
-            Interactive 3D visualization of your property in Visakhapatnam. Rotate, explore, and monitor from anywhere.
+            Stylised model for communication — rotate and zoom below, or open the{' '}
+            <Link href="/demo/plot-3d/" className="text-accent underline-offset-4 hover:underline">
+              full-screen public demo
+            </Link>{' '}
+            without logging in.
           </p>
         </motion.div>
 

@@ -14,7 +14,7 @@ const painPoints = [
     number: '02',
     icon: FileWarning,
     title: 'Legal Complexity',
-    description: 'AP RERA filings, tax dues, and compliance requirements pile up without oversight.',
+    description: 'Statutory filings, tax dues, and compliance windows pile up without a single calendar owner.',
   },
   {
     number: '03',
@@ -51,7 +51,7 @@ const itemVariants = {
 
 export function ProblemSection() {
   return (
-    <section id="about" className="bg-charcoal py-24 lg:py-32">
+    <section id="about" className="bg-charcoal py-16 lg:py-20">
       <div className="mx-auto max-w-[1400px] px-6 lg:px-12">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
           {/* Left Content */}
@@ -62,15 +62,16 @@ export function ProblemSection() {
             transition={{ duration: 0.6 }}
           >
             <h2 className="font-serif text-4xl font-bold leading-tight text-white md:text-5xl lg:text-6xl">
-              NRI Landowners
+              Visakhapatnam Land at Risk When
               <br />
-              Live Far.
+              No One Visits on a
               <br />
-              <span className="text-primary">Their Plots Don&apos;t.</span>
+              <span className="text-primary">Predictable Schedule.</span>
             </h2>
             <p className="mt-6 max-w-md font-sans text-lg leading-relaxed text-white/60">
-              The risks are real. Traditional solutions are unreliable. Your land needs 
-              professional oversight that you can trust.
+              NRIs abroad, metro-based owners with a second asset in AP, and local investors with multiple parcels all
+              share the same failure mode: decisions made from stale information. PlotKare is built around dated
+              field evidence you can forward to counsel or family.
             </p>
           </motion.div>
 

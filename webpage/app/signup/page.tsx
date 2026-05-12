@@ -114,7 +114,7 @@ export default function SignupPage() {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  placeholder="+91 9876543210"
+                  placeholder="Include country code (e.g. +1 …)"
                   className="w-full bg-transparent border-b border-white/20 px-0 py-3 font-sans text-white placeholder-white/40 focus:border-b-2 focus:border-[#C0392B] focus:outline-none transition-colors"
                 />
               </div>

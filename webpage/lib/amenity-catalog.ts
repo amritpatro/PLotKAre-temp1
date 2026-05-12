@@ -12,7 +12,14 @@ export type AmenityCatalogItem = {
 
 export const AMENITY_CATALOG: AmenityCatalogItem[] = [
   { id: 'container-farming', name: 'Container Farming Lease', category: 'Income Generation', image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600', kind: 'monthly', amount: 800 },
-  { id: 'mushroom-kit', name: 'Mushroom Kit Cultivation', category: 'Income Generation', image: '/images/mushroom-kit.jpg', isLocalImage: true, kind: 'monthly', amount: 1200 },
+  {
+    id: 'mushroom-kit',
+    name: 'Mushroom Kit Cultivation',
+    category: 'Income Generation',
+    image: 'https://images.unsplash.com/photo-1575535468632-345892508d6b?w=600&auto=format&fit=crop&q=80',
+    kind: 'monthly',
+    amount: 1200,
+  },
   { id: 'solar-panel', name: 'Solar Panel Hosting', category: 'Income Generation', image: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=600', kind: 'monthly', amount: 1500 },
   { id: 'flower-bed', name: 'Flower Bed Maintenance', category: 'Aesthetic', image: 'https://images.unsplash.com/photo-1490750967868-88df5691cc17?w=600', kind: 'monthly', amount: 300 },
   { id: 'swing-set', name: 'Swing Set Installation', category: 'Lifestyle', image: 'https://images.unsplash.com/photo-1575783970733-1aaedde1db74?w=600', kind: 'monthly', amount: 400 },

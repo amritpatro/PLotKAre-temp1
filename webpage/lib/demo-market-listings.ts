@@ -22,7 +22,7 @@ export const DEFAULT_MARKET_LISTINGS: MarketListing[] = [
     cornerPlot: true,
     priceLakhs: 72,
     imageUrl:
-      'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800',
+      'https://images.unsplash.com/photo-1628624747186-d9c6e7c79f8f?w=800&auto=format&fit=crop&q=80',
   },
   {
     id: 'demo-kmd-008',
@@ -33,7 +33,7 @@ export const DEFAULT_MARKET_LISTINGS: MarketListing[] = [
     priceLakhs: 95,
     premiumBadge: true,
     imageUrl:
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800',
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop&q=80',
   },
   {
     id: 'demo-and-034',
@@ -43,7 +43,7 @@ export const DEFAULT_MARKET_LISTINGS: MarketListing[] = [
     facing: 'West',
     priceLakhs: 48,
     imageUrl:
-      'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800',
+      'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&auto=format&fit=crop&q=80',
   },
   {
     id: 'demo-pnd-017',
@@ -53,7 +53,7 @@ export const DEFAULT_MARKET_LISTINGS: MarketListing[] = [
     facing: 'South',
     priceLakhs: 68,
     imageUrl:
-      'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800',
+      'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&auto=format&fit=crop&q=80',
   },
 ]
 

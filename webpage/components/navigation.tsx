@@ -6,6 +6,8 @@ import Link from 'next/link'
 import { LogoMark } from '@/components/logo'
 
 const navLinks = [
+  { href: '/listings/', label: 'Listings' },
+  { href: '/blog/', label: 'Blog' },
   { href: '#about', label: 'About' },
   { href: '#services', label: 'Services' },
   { href: '#how-it-works', label: 'How It Works' },
@@ -41,8 +43,7 @@ export function Navigation() {
   return (
     <>
       <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
+        initial={false}
         className={`fixed top-0 left-0 right-0 z-50 bg-white transition-shadow duration-300 ${
           isScrolled ? 'shadow-md' : 'border-b border-border'
         }`}

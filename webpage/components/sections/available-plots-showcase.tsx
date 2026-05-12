@@ -113,7 +113,7 @@ function PlotCard({
     >
       <Image
         src={plot.imageUrl}
-        alt=""
+        alt={`${plot.propertyKind === 'apartment' ? 'Apartment' : 'Plot'} listing ${plot.plotNumber} — ${plot.location}, Visakhapatnam area (demo)`}
         fill
         className="object-cover transition-[filter,transform] duration-300 group-hover:brightness-[1.08]"
         sizes="(max-width:768px) 100vw, 33vw"
@@ -125,9 +125,14 @@ function PlotCard({
       />
       <div className="absolute inset-x-0 bottom-0 flex flex-col gap-3 p-5 md:p-6">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-full bg-[#16A34A]/90 px-2.5 py-1 font-sans text-[10px] font-semibold uppercase tracking-wide text-white">
-            Verified by PlotKare
+          <span className="rounded-full bg-white/15 px-2.5 py-1 font-sans text-[10px] font-semibold uppercase tracking-wide text-white/90">
+            Demo listing · verify on site
           </span>
+          {plot.propertyKind === 'apartment' && (
+            <span className="rounded-full border border-white/25 bg-black/40 px-2.5 py-1 font-sans text-[10px] font-semibold uppercase tracking-wide text-white/80">
+              Apartment
+            </span>
+          )}
           {plot.premium && (
             <span
               className="rounded-full px-2.5 py-1 font-sans text-[10px] font-semibold uppercase tracking-wide text-white"
@@ -145,12 +150,14 @@ function PlotCard({
         </h3>
         <div className="flex flex-wrap gap-2">
           <span className="rounded-full border border-white/15 bg-black/30 px-3 py-1 font-sans text-xs text-white/60">
-            {plot.sizeLabel}
+            {plot.propertyKind === 'apartment'
+              ? `${plot.bhk ?? '—'} BHK${plot.floorLabel ? ` · ${plot.floorLabel}` : ''}`
+              : plot.sizeLabel}
           </span>
           <span className="rounded-full border border-white/15 bg-black/30 px-3 py-1 font-sans text-xs text-white/60">
             {plot.facing} facing
           </span>
-          {plot.cornerPlot && (
+          {plot.cornerPlot && plot.propertyKind === 'plot' && (
             <span className="rounded-full border border-white/15 bg-black/30 px-3 py-1 font-sans text-xs text-white/60">
               Corner Plot
             </span>
@@ -167,6 +174,12 @@ function PlotCard({
           >
             View Details
           </button>
+          <Link
+            href={`/demo/plot-3d/?listing=${encodeURIComponent(plot.plotNumber)}`}
+            className="rounded-xl border-2 border-accent/80 bg-accent/15 px-5 py-2.5 font-sans text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-accent/25"
+          >
+            View in 3D
+          </Link>
           <button
             type="button"
             onClick={onInquire}
@@ -211,10 +224,11 @@ export function AvailablePlotsShowcaseSection() {
           className="mb-12 text-center"
         >
           <h2 className="font-serif text-4xl font-bold text-white md:text-5xl">
-            Available Plots in Visakhapatnam
+            Visakhapatnam Open Plots &amp; Sample Apartments
           </h2>
           <p className="mt-4 font-sans text-lg text-white/55">
-            Verified vacant plots monitored by PlotKare agents
+            Demo inventory for layout — use <strong className="font-medium text-white/75">View in 3D</strong> on any card
+            for the public WebGL preview, or browse the full hub on the listings page.
           </p>
         </motion.div>
 
@@ -248,29 +262,38 @@ export function AvailablePlotsShowcaseSection() {
         >
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-black/40" />
           <p className="relative mx-auto max-w-2xl font-sans text-base text-white/75 md:text-lg">
-            Want to see more verified plots? Sign in to access all listings and contact sellers directly
+            Explore the public listings hub for every demo plot and apartment card, then sign in when you are ready to
+            save notes or message an advisor.
           </p>
-          <Link
-            href="/login"
-            className="relative mt-6 inline-flex rounded-xl px-10 py-3.5 font-sans text-sm font-semibold text-white transition-opacity hover:opacity-90"
-            style={{ backgroundColor: CRIMSON }}
-          >
-            Sign In to See More
-          </Link>
+          <div className="relative mt-6 flex flex-wrap justify-center gap-4">
+            <Link
+              href="/listings/"
+              className="inline-flex rounded-xl border border-white/30 bg-transparent px-8 py-3.5 font-sans text-sm font-semibold text-white transition-colors hover:bg-white/10"
+            >
+              Browse listings hub
+            </Link>
+            <Link
+              href="/login"
+              className="inline-flex rounded-xl px-10 py-3.5 font-sans text-sm font-semibold text-white transition-opacity hover:opacity-90"
+              style={{ backgroundColor: CRIMSON }}
+            >
+              Sign in for owner tools
+            </Link>
+          </div>
         </motion.div>
       </div>
 
       <Dialog open={!!detailPlot} onOpenChange={(o) => !o && setDetailPlot(null)}>
         <DialogContent className="max-h-[90vh] overflow-y-auto border-white/10 bg-[#141414] text-white sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle className="font-serif text-xl text-white">Plot details</DialogTitle>
+            <DialogTitle className="font-serif text-xl text-white">Listing details</DialogTitle>
           </DialogHeader>
           {detailPlot && (
             <div className="space-y-5 pt-2">
               <div className="relative aspect-[16/10] w-full overflow-hidden rounded-lg">
                 <Image
                   src={detailPlot.imageUrl}
-                  alt=""
+                  alt={`${detailPlot.propertyKind === 'apartment' ? 'Apartment' : 'Plot'} listing ${detailPlot.plotNumber} — ${detailPlot.location} (demo)`}
                   fill
                   className="object-cover"
                   sizes="500px"
@@ -278,7 +301,7 @@ export function AvailablePlotsShowcaseSection() {
               </div>
               <div className="space-y-1 font-sans text-sm text-white/70">
                 <p>
-                  <span className="text-white/50">Plot number:</span>{' '}
+                  <span className="text-white/50">Reference:</span>{' '}
                   <span className="font-mono" style={{ color: CRIMSON }}>
                     {detailPlot.plotNumber}
                   </span>
@@ -288,20 +311,27 @@ export function AvailablePlotsShowcaseSection() {
                   <span className="font-serif text-lg text-white">{detailPlot.location}</span>
                 </p>
                 <p>
-                  <span className="text-white/50">Size:</span> {detailPlot.sizeLabel}
+                  <span className="text-white/50">{detailPlot.propertyKind === 'apartment' ? 'Unit:' : 'Size:'}</span>{' '}
+                  {detailPlot.propertyKind === 'apartment'
+                    ? `${detailPlot.bhk ?? '—'} BHK${detailPlot.floorLabel ? ` · ${detailPlot.floorLabel}` : ''} · ${detailPlot.sizeLabel}`
+                    : detailPlot.sizeLabel}
                 </p>
                 <p>
                   <span className="text-white/50">Facing:</span> {detailPlot.facing}
                 </p>
+                {detailPlot.propertyKind === 'plot' && (
                 <p>
                   <span className="text-white/50">Corner plot:</span>{' '}
                   {detailPlot.cornerPlot ? 'Yes' : 'No'}
                 </p>
+                )}
                 <p className="font-mono text-xl font-semibold" style={{ color: GOLD }}>
                   Asking ₹ {detailPlot.priceDisplay}
                 </p>
               </div>
+              {detailPlot.propertyKind === 'plot' && (
               <PlotTopdownSvg cornerPlot={detailPlot.cornerPlot} className="border-white/15" />
+              )}
               <button
                 type="button"
                 onClick={() => {

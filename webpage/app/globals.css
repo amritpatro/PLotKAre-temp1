@@ -106,6 +106,18 @@
   animation: marquee 30s linear infinite;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .animate-plot-pulse,
+  .animate-ping-slow {
+    animation: none !important;
+  }
+}
+
 /* Pulse animation for plot highlight */
 @keyframes plot-pulse {
   0%, 100% {

@@ -17,7 +17,8 @@ const steps = [
   {
     number: '03',
     title: 'Agent Deployed',
-    description: 'A background-verified local agent is assigned to your plot within 48 hours of registration.',
+    description:
+      'A field coordinator is assigned to your plot file with a written scope — timelines depend on corridor and intake volume.',
   },
   {
     number: '04',
@@ -52,7 +53,7 @@ export function HowItWorksSection() {
           className="mb-12 text-center"
         >
           <h2 className="font-serif text-4xl font-bold text-white md:text-5xl">
-            Five Steps to <span className="text-primary">Peace of Mind</span>
+            How Visakhapatnam Plot Monitoring Works in <span className="text-primary">Five Steps</span>
           </h2>
         </motion.div>
 

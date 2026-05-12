@@ -12,200 +12,149 @@ export function ContactSection() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
-    
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
+    await new Promise((resolve) => setTimeout(resolve, 800))
     setIsSubmitting(false)
     setIsSubmitted(true)
   }
 
   return (
-    <section id="contact" className="bg-secondary py-24 lg:py-32">
-      <div className="mx-auto max-w-[1400px] px-6 lg:px-12">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
-          {/* Left Content */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="font-serif text-4xl font-bold leading-tight text-foreground md:text-5xl">
-              Start Protecting
-              <br />
-              <span className="text-primary">Your Plot Today</span>
-            </h2>
-            <p className="mt-6 max-w-md font-sans text-lg leading-relaxed text-muted-foreground">
-              Your first inspection report is delivered within seven days of signing up. 
-              No long-term commitment required.
-            </p>
+    <section id="contact" className="bg-secondary py-16 lg:py-24">
+      <div className="mx-auto max-w-[720px] px-6 lg:px-12">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55 }}
+          className="text-center"
+        >
+          <h2 className="font-serif text-4xl font-bold leading-tight text-foreground md:text-5xl">
+            Talk to PlotKare in Visakhapatnam
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl font-sans text-base text-muted-foreground">
+            Prefer quick replies? Use the floating WhatsApp placeholder (replace with your business number when ready) or
+            email — this short form is optional so we do not duplicate long intake twice on the page.
+          </p>
+        </motion.div>
 
-            {/* CTAs */}
-            <div className="mt-8 flex flex-wrap gap-4">
-              <Link
-                href="#"
-                className="inline-flex items-center justify-center rounded-sm bg-primary px-8 py-4 font-sans text-sm font-medium text-white transition-colors hover:bg-primary/90"
-              >
-                List My Plot
-              </Link>
-              <Link
-                href="#"
-                className="inline-flex items-center justify-center rounded-sm border border-foreground bg-transparent px-8 py-4 font-sans text-sm font-medium text-foreground transition-colors hover:bg-foreground hover:text-white"
-              >
-                Download Brochure
-              </Link>
-            </div>
-
-            {/* Contact Info */}
-            <div className="mt-12 space-y-4">
-              <div className="flex items-start gap-4">
-                <MapPin className="mt-1 h-5 w-5 text-primary" />
-                <div>
-                  <p className="font-sans text-sm font-medium text-foreground">
-                    2nd Floor, Krishna Towers
-                  </p>
-                  <p className="font-sans text-sm text-muted-foreground">
-                    Siripuram, Visakhapatnam 530003
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <Phone className="h-5 w-5 text-primary" />
-                <p className="font-sans text-sm text-foreground">
-                  +91 891 234 5678
-                </p>
-              </div>
-              <div className="flex items-center gap-4">
-                <Mail className="h-5 w-5 text-primary" />
-                <p className="font-sans text-sm text-foreground">
-                  hello@plotkare.in
-                </p>
-              </div>
-              <div className="flex items-center gap-4">
-                <Clock className="h-5 w-5 text-primary" />
-                <p className="font-sans text-sm text-foreground">
-                  Mon - Sat, 9:00 AM - 7:00 PM IST
-                </p>
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.08 }}
+          className="mt-10 grid gap-8 rounded-xl border border-border bg-card p-8 shadow-sm md:grid-cols-[1fr_minmax(0,1fr)] md:gap-10 md:p-10"
+        >
+          <div className="space-y-5 text-left">
+            <div className="flex items-start gap-3">
+              <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+              <div>
+                <p className="font-sans text-sm font-medium text-foreground">2nd Floor, Krishna Towers</p>
+                <p className="font-sans text-sm text-muted-foreground">Siripuram, Visakhapatnam 530003</p>
               </div>
             </div>
-          </motion.div>
+            <div className="flex items-start gap-3">
+              <Mail className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+              <a href="mailto:hello@plotkare.in" className="font-sans text-sm text-foreground underline-offset-4 hover:underline">
+                hello@plotkare.in
+              </a>
+            </div>
+            <div className="flex items-start gap-3">
+              <Phone className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+              <p className="font-sans text-sm text-foreground">
+                <a href="mailto:hello@plotkare.in?subject=Call%20back%20request" className="underline-offset-4 hover:underline">
+                  Request a callback by email
+                </a>
+                <span className="mt-1 block text-xs text-muted-foreground">
+                  We publish a phone line only when it is staffed for inbound calls.
+                </span>
+              </p>
+            </div>
+            <div className="flex items-start gap-3">
+              <Clock className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+              <p className="font-sans text-sm text-foreground">Mon - Sat, 9:00 AM - 7:00 PM IST</p>
+            </div>
+            <div className="flex flex-wrap gap-3 pt-2">
+              <Link
+                href="/listings/"
+                className="inline-flex rounded-sm bg-primary px-6 py-3 font-sans text-sm font-medium text-white transition-colors hover:bg-primary/90"
+              >
+                Browse listings
+              </Link>
+              <Link
+                href="/demo/plot-3d/"
+                className="inline-flex rounded-sm border border-foreground px-6 py-3 font-sans text-sm font-medium text-foreground transition-colors hover:bg-foreground hover:text-background"
+              >
+                Open 3D demo
+              </Link>
+            </div>
+          </div>
 
-          {/* Right Content - Contact Form */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
+          <div>
             {isSubmitted ? (
-              <div className="flex h-full items-center justify-center rounded-lg bg-white p-12">
-                <div className="text-center">
-                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                    <svg
-                      className="h-8 w-8 text-primary"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  </div>
-                  <h3 className="font-serif text-2xl font-semibold text-foreground">
-                    Enquiry Received
-                  </h3>
-                  <p className="mt-2 font-sans text-muted-foreground">
-                    We will call you back within 24 hours.
-                  </p>
+              <div className="flex min-h-[240px] flex-col items-center justify-center text-center">
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                  <svg className="h-7 w-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
                 </div>
+                <h3 className="font-serif text-xl font-semibold text-foreground">Thanks — we received your note</h3>
+                <p className="mt-2 font-sans text-sm text-muted-foreground">
+                  This demo form does not post to a server yet; wire it to your CRM or inbox when ready.
+                </p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="rounded-lg bg-white p-8 shadow-sm">
-                <div className="space-y-6">
-                  <div>
-                    <label
-                      htmlFor="name"
-                      className="mb-2 block font-sans text-sm font-medium text-foreground"
-                    >
-                      Name
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      required
-                      className="w-full border-0 border-b border-border bg-transparent px-0 py-3 font-sans text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-0"
-                      placeholder="Your full name"
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="phone"
-                      className="mb-2 block font-sans text-sm font-medium text-foreground"
-                    >
-                      Phone Number
-                    </label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      name="phone"
-                      required
-                      className="w-full border-0 border-b border-border bg-transparent px-0 py-3 font-sans text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-0"
-                      placeholder="+1 234 567 8900"
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="location"
-                      className="mb-2 block font-sans text-sm font-medium text-foreground"
-                    >
-                      Plot Location
-                    </label>
-                    <input
-                      type="text"
-                      id="location"
-                      name="location"
-                      required
-                      className="w-full border-0 border-b border-border bg-transparent px-0 py-3 font-sans text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-0"
-                      placeholder="e.g., Bheemunipatnam Phase 2"
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="message"
-                      className="mb-2 block font-sans text-sm font-medium text-foreground"
-                    >
-                      Message
-                    </label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      rows={4}
-                      className="w-full resize-none border-0 border-b border-border bg-transparent px-0 py-3 font-sans text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-0"
-                      placeholder="Tell us about your plot..."
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full rounded-sm bg-primary py-4 font-sans text-sm font-medium text-white transition-colors hover:bg-primary/90 disabled:opacity-50"
-                  >
-                    {isSubmitting ? 'Sending...' : 'Send Enquiry'}
-                  </button>
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div>
+                  <label htmlFor="contact-name" className="mb-1.5 block font-sans text-sm font-medium text-foreground">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    id="contact-name"
+                    name="name"
+                    required
+                    autoComplete="name"
+                    className="w-full rounded-md border border-input bg-background px-3 py-2.5 font-sans text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    placeholder="Your name"
+                  />
                 </div>
+                <div>
+                  <label htmlFor="contact-email" className="mb-1.5 block font-sans text-sm font-medium text-foreground">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    id="contact-email"
+                    name="email"
+                    required
+                    autoComplete="email"
+                    className="w-full rounded-md border border-input bg-background px-3 py-2.5 font-sans text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    placeholder="you@example.com"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="contact-message" className="mb-1.5 block font-sans text-sm font-medium text-foreground">
+                    Message
+                  </label>
+                  <textarea
+                    id="contact-message"
+                    name="message"
+                    rows={4}
+                    required
+                    className="w-full resize-y rounded-md border border-input bg-background px-3 py-2.5 font-sans text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    placeholder="Plot location, concerns, or expansion interest…"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full rounded-sm bg-primary py-3 font-sans text-sm font-medium text-white transition-colors hover:bg-primary/90 disabled:opacity-50"
+                >
+                  {isSubmitting ? 'Sending…' : 'Send'}
+                </button>
               </form>
             )}
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   )

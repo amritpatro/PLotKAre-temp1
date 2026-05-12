@@ -1,45 +1,57 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { AnimatedCounter } from '@/components/animated-counter'
 
-const stats = [
-  { value: 340, suffix: '+', label: 'Plots Currently Managed' },
-  { value: 3, suffix: '', label: 'Districts Covered (Vizag City, Rural & Bheemunipatnam)' },
-  { value: 12, suffix: '', label: 'Background-Verified Field Agents' },
-  { value: 4080, suffix: '+', label: 'Inspection Reports Delivered' },
+const pillars = [
+  {
+    title: 'Inspection cadence',
+    body: 'Repeatable checklists for boundaries, access paths, and visible encroachments — written so a family member or lawyer can follow without jargon.',
+  },
+  {
+    title: 'Legal & tax hygiene',
+    body: 'Reminders for EC pulls, mutation updates, and recurring dues so small gaps do not snowball into disputes.',
+  },
+  {
+    title: 'Resale & income optionality',
+    body: 'When you are ready to lease, build, or sell, you already have dated evidence of how the asset was maintained.',
+  },
+  {
+    title: 'Corridor familiarity',
+    body: 'Structured around Visakhapatnam growth belts — see dedicated corridor pages for local context and search keywords.',
+  },
 ]
 
 export function StatisticsSection() {
   return (
     <section id="investors" className="bg-secondary py-24 lg:py-32">
       <div className="mx-auto max-w-[1400px] px-6 lg:px-12">
+        <motion.h2
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55 }}
+          className="mb-12 text-center font-serif text-3xl font-bold text-foreground md:text-4xl"
+        >
+          Visakhapatnam Plot Monitoring Built for Long-Distance Decisions
+        </motion.h2>
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4"
+          className="grid gap-8 sm:grid-cols-2"
         >
-          {stats.map((stat, index) => (
+          {pillars.map((stat, index) => (
             <motion.div
-              key={index}
+              key={stat.title}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="text-center lg:text-left"
+              transition={{ duration: 0.5, delay: index * 0.08 }}
+              className="rounded-xl border border-border bg-white/60 p-8 text-left shadow-sm backdrop-blur-sm"
             >
-              <p className="font-mono text-5xl font-bold text-primary md:text-6xl">
-                <AnimatedCounter 
-                  target={stat.value} 
-                  suffix={stat.suffix} 
-                  duration={2}
-                />
-              </p>
-              <p className="mt-3 font-sans text-sm text-muted-foreground">
-                {stat.label}
-              </p>
+              <p className="font-serif text-xl font-semibold text-primary">{stat.title}</p>
+              <p className="mt-3 font-sans text-sm leading-relaxed text-muted-foreground">{stat.body}</p>
             </motion.div>
           ))}
         </motion.div>
