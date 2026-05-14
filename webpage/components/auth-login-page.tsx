@@ -34,12 +34,12 @@ export function AuthLoginPage({ mode }: { mode: AuthLoginMode }) {
         if (profile?.role === 'admin') router.replace('/admin/dashboard')
         return
       }
-      router.replace('/dashboard')
+      router.replace(searchParams.get('next') || '/dashboard')
     })
     return () => {
       mounted = false
     }
-  }, [router, mode, supabase])
+  }, [router, mode, searchParams, supabase])
 
   const redirectAfterLogin = () => {
     const next = searchParams.get('next')
@@ -85,7 +85,7 @@ export function AuthLoginPage({ mode }: { mode: AuthLoginMode }) {
   const handleOAuth = async () => {
     setError('')
     setIsSigningIn(true)
-    const next = mode === 'admin' ? '/admin/dashboard' : '/dashboard'
+    const next = searchParams.get('next') || (mode === 'admin' ? '/admin/dashboard' : '/dashboard')
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {

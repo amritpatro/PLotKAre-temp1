@@ -12,6 +12,8 @@ import { signupSchema } from '@/lib/validation/auth'
 export default function SignupPage() {
   const router = useRouter()
   const supabase = createSupabaseBrowserClient()
+  const [nextPath, setNextPath] = useState('/dashboard')
+  const [intent, setIntent] = useState('')
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -25,14 +27,21 @@ export default function SignupPage() {
   const [error, setError] = useState('')
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const next = params.get('next')
+    if (next?.startsWith('/')) setNextPath(next)
+    setIntent(params.get('intent') ?? '')
+  }, [])
+
+  useEffect(() => {
     let mounted = true
     supabase.auth.getUser().then(({ data }) => {
-      if (mounted && data.user) router.replace('/dashboard')
+      if (mounted && data.user) router.replace(nextPath)
     })
     return () => {
       mounted = false
     }
-  }, [router, supabase])
+  }, [nextPath, router, supabase])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -56,7 +65,7 @@ export default function SignupPage() {
       email: parsed.data.email,
       password: parsed.data.password,
       options: {
-        emailRedirectTo: `${getSiteUrl()}/auth/callback?next=/dashboard`,
+        emailRedirectTo: `${getSiteUrl()}/auth/callback?next=${encodeURIComponent(nextPath)}`,
         data: {
           full_name: parsed.data.fullName,
           phone: parsed.data.phone,
@@ -91,6 +100,12 @@ export default function SignupPage() {
           <h1 className="font-serif text-4xl italic text-[#D4AF94]">
             Create Account.
           </h1>
+          {intent === 'add-property' ? (
+            <p className="font-sans text-sm leading-relaxed text-white/60">
+              Create your owner account first. After verification, you can add plot location, size, facing,
+              documents, and inspection details from the dashboard.
+            </p>
+          ) : null}
 
           {submitted ? (
             <div className="space-y-6 text-center">
@@ -106,7 +121,7 @@ export default function SignupPage() {
                 </p>
                 <button
                   type="button"
-                  onClick={() => router.push('/login')}
+                  onClick={() => router.push(`/login?next=${encodeURIComponent(nextPath)}`)}
                   className="mt-6 w-full rounded-sm bg-[#C0392B] py-3 font-sans text-base font-medium text-white transition-colors hover:bg-[#A93225]"
                 >
                   Go to Sign In

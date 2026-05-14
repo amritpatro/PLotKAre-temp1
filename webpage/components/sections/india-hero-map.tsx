@@ -19,25 +19,19 @@ import { withBasePath } from '@/lib/site-config'
 import { cn } from '@/lib/utils'
 
 const VIZAG = { lon: 83.2185, lat: 17.6868 }
-const NORTHERN_CONTEXT_RING: [number, number][] = [
-  [73.25, 35.75],
-  [74.65, 37.1],
-  [76.6, 37.72],
-  [78.65, 36.95],
-  [79.3, 35.45],
-  [78.35, 34.35],
-  [76.55, 34.65],
-  [74.8, 34.35],
-  [73.45, 35.05],
-  [73.25, 35.75],
-]
-
-/** Illustrative owner-origin cities for the national property network story. */
-const GLOBAL_ANCHORS = [
-  { name: 'Houston', lon: -95.3698, lat: 29.7604 },
-  { name: 'Dubai', lon: 55.2708, lat: 25.2048 },
-  { name: 'London', lon: -0.1278, lat: 51.5074 },
-  { name: 'Singapore', lon: 103.8198, lat: 1.3521 },
+const MAP_COLORS = [
+  '#ef6f6c',
+  '#f2c14e',
+  '#77b255',
+  '#70c1d3',
+  '#b388c4',
+  '#f7a1a1',
+  '#a8d672',
+  '#f4d35e',
+  '#90be6d',
+  '#f6bd60',
+  '#8ecae6',
+  '#cdb4db',
 ]
 
 function isAndhraPradesh(name: string, iso: string) {
@@ -48,7 +42,15 @@ function isNorthernTerritory(name: string, iso: string) {
   return iso === 'IN-JK' || iso === 'IN-LA' || name.includes('Jammu') || name.includes('Ladakh')
 }
 
-type PathRow = { key: string; name: string; iso: string; d: string; ap: boolean; north: boolean }
+function colorForRegion(name: string, iso: string, index: number) {
+  if (isAndhraPradesh(name, iso)) return '#8B1538'
+  if (isNorthernTerritory(name, iso)) return '#ef4444'
+  let hash = index
+  for (let i = 0; i < name.length; i++) hash = (hash + name.charCodeAt(i) * (i + 3)) % 997
+  return MAP_COLORS[hash % MAP_COLORS.length]
+}
+
+type PathRow = { key: string; name: string; iso: string; d: string; ap: boolean; north: boolean; fill: string }
 
 export function IndiaHeroMap() {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -88,8 +90,6 @@ export function IndiaHeroMap() {
         h,
         paths: [] as PathRow[],
         vizag: null as [number, number] | null,
-        lines: [] as { key: string; d: string }[],
-        northContext: '',
       }
     }
 
@@ -113,31 +113,14 @@ export function IndiaHeroMap() {
         d,
         ap: isAndhraPradesh(name, iso),
         north: isNorthernTerritory(name, iso),
+        fill: colorForRegion(name, iso, i),
       }
     })
-
-    const northProjected = NORTHERN_CONTEXT_RING.map((point) => projection(point)).filter(Boolean) as [number, number][]
-    const northContext =
-      northProjected.length > 1
-        ? northProjected.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p[0]} ${p[1]}`).join(' ') + ' Z'
-        : ''
 
     const v = projection([VIZAG.lon, VIZAG.lat])
     const vizag: [number, number] | null = v ? [v[0]!, v[1]!] : null
 
-    const lines: { key: string; d: string }[] = []
-    if (vizag) {
-      for (const g of GLOBAL_ANCHORS) {
-        const p = projection([g.lon, g.lat])
-        if (!p) continue
-        lines.push({
-          key: g.name,
-          d: `M ${p[0]} ${p[1]} L ${vizag[0]} ${vizag[1]}`,
-        })
-      }
-    }
-
-    return { w, h, paths, vizag, lines, northContext }
+    return { w, h, paths, vizag }
   }, [fc])
 
   useLayoutEffect(() => {
@@ -164,10 +147,6 @@ export function IndiaHeroMap() {
           aria-label="Interactive map of India: choose a state or union territory for PlotKare coverage and expansion details"
         >
           <defs>
-            <linearGradient id="plotkareMapBg" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#ffffff" stopOpacity={0.08} />
-              <stop offset="100%" stopColor="#F8F6F3" stopOpacity={0.18} />
-            </linearGradient>
             <filter id="apGlow" x="-60%" y="-60%" width="220%" height="220%">
               <feGaussianBlur stdDeviation="2.8" result="blur" />
               <feMerge>
@@ -177,23 +156,7 @@ export function IndiaHeroMap() {
             </filter>
           </defs>
 
-          <rect width={layout.w} height={layout.h} rx={16} fill="url(#plotkareMapBg)" />
-
-          {layout.vizag && layout.lines.length > 0 ? (
-            <g className="pointer-events-none opacity-[0.2] lg:opacity-[0.26]" aria-hidden>
-              {layout.lines.map((ln) => (
-                <path
-                  key={ln.key}
-                  d={ln.d}
-                  fill="none"
-                  stroke="#C9A962"
-                  strokeWidth={0.75}
-                  strokeDasharray="5 7"
-                  strokeLinecap="round"
-                />
-              ))}
-            </g>
-          ) : null}
+          <rect width={layout.w} height={layout.h} rx={16} fill="#ffffff" />
 
           <g className="state-layer">
             {layout.paths
@@ -202,11 +165,12 @@ export function IndiaHeroMap() {
                 <path
                   key={p.key}
                   d={p.d}
-                  fill="rgba(139, 21, 56, 0.04)"
-                  stroke="#C9A962"
-                  strokeOpacity={0.55}
-                  strokeWidth={0.65}
-                  className="cursor-pointer transition-[fill,stroke-opacity] duration-200 hover:fill-[rgba(139,21,56,0.11)]"
+                  fill={p.fill}
+                  fillOpacity={0.86}
+                  stroke="#1a1a1a"
+                  strokeOpacity={0.46}
+                  strokeWidth={0.5}
+                  className="cursor-pointer transition-[filter,fill-opacity] duration-200 hover:fill-opacity-100"
                   tabIndex={0}
                   role="button"
                   aria-label={`${p.name}. Opens details about PlotKare in this region.`}
@@ -219,30 +183,19 @@ export function IndiaHeroMap() {
                   }}
                 />
               ))}
-            {layout.northContext ? (
-              <path
-                d={layout.northContext}
-                fill="rgba(201, 169, 98, 0.08)"
-                stroke="#8B1538"
-                strokeOpacity={0.42}
-                strokeWidth={0.95}
-                strokeDasharray="4 3"
-                className="pointer-events-none"
-                aria-hidden="true"
-              />
-            ) : null}
             {layout.paths
               .filter((p) => p.north)
               .map((p) => (
                 <path
                   key={p.key}
                   d={p.d}
-                  fill="rgba(201, 169, 98, 0.14)"
-                  stroke="#8B1538"
-                  strokeOpacity={0.72}
-                  strokeWidth={0.95}
+                  fill={p.fill}
+                  fillOpacity={0.92}
+                  stroke="#1a1a1a"
+                  strokeOpacity={0.58}
+                  strokeWidth={0.62}
                   strokeLinejoin="round"
-                  className="cursor-pointer transition-[fill,stroke-opacity] duration-200 hover:fill-[rgba(201,169,98,0.2)]"
+                  className="cursor-pointer transition-[filter,fill-opacity] duration-200 hover:fill-opacity-100"
                   tabIndex={0}
                   role="button"
                   aria-label={`${p.name}. Northern India coverage context retained in the PlotKare national map.`}
@@ -272,11 +225,12 @@ export function IndiaHeroMap() {
                   ) : null}
                   <path
                     d={p.d}
-                    fill="rgba(139, 21, 56, 0.13)"
+                    fill={p.fill}
+                    fillOpacity={0.92}
                     stroke="#8B1538"
-                    strokeWidth={1.85}
+                    strokeWidth={1.25}
                     strokeLinejoin="round"
-                    className="cursor-pointer transition-[fill] duration-200 hover:fill-[rgba(139,21,56,0.2)]"
+                    className="cursor-pointer transition-[filter,fill-opacity] duration-200 hover:fill-opacity-100"
                     tabIndex={0}
                     role="button"
                     aria-label={`${p.name}. Active coordination starting from Visakhapatnam and coastal Andhra Pradesh.`}

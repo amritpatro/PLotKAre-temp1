@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic'
 import { Canvas, useThree } from '@react-three/fiber'
-import { OrbitControls, Text } from '@react-three/drei'
+import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { BODUVALASA_LAYOUT } from '@/lib/boduvalasa-layout'
@@ -142,51 +142,10 @@ function BoduvalasaScene({ selectedPlot, onPlotSelect }: Boduvalasa3DCanvasProps
               </mesh>
             ) : null}
             {selected && selectedProfile ? (
-              <group position={[0, height / 2 + 0.025, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-                <Text
-                  fontSize={0.058}
-                  color="#ffffff"
-                  anchorX="center"
-                  anchorY="middle"
-                  maxWidth={0.72}
-                  textAlign="center"
-                >
-                  PLOTKARE VERIFIED
-                </Text>
-                <Text
-                  position={[0, -0.07, 0.002]}
-                  fontSize={0.046}
-                  color="#fff6d8"
-                  anchorX="center"
-                  anchorY="middle"
-                  maxWidth={0.68}
-                  textAlign="center"
-                >
-                  {`Plot ${selectedProfile.plotNumber} · ${selectedProfile.ownerName}`}
-                </Text>
-                <Text
-                  position={[0, -0.13, 0.003]}
-                  fontSize={0.032}
-                  color="#ffffff"
-                  anchorX="center"
-                  anchorY="middle"
-                  maxWidth={0.68}
-                  textAlign="center"
-                >
-                  {`${selectedProfile.facing} · ${selectedProfile.roadAccess}`}
-                </Text>
-                <Text
-                  position={[0, -0.18, 0.004]}
-                  fontSize={0.029}
-                  color="#fff6d8"
-                  anchorX="center"
-                  anchorY="middle"
-                  maxWidth={0.68}
-                  textAlign="center"
-                >
-                  {`${selectedProfile.extent} · ${selectedProfile.status}`}
-                </Text>
-              </group>
+              <mesh position={[0, height / 2 + 0.018, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                <ringGeometry args={[Math.max(parcelW, parcelD) * 0.55, Math.max(parcelW, parcelD) * 0.7, 32]} />
+                <meshBasicMaterial color="#fff6d8" transparent opacity={0.72} />
+              </mesh>
             ) : null}
           </group>
         )

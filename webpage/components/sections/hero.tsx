@@ -35,13 +35,13 @@ export function HeroSection() {
 
           <div className="mt-9 flex flex-wrap gap-4">
             <Link
-              href="#plot-layout"
+              href="/demo/plot-3d/"
               className="inline-flex min-h-12 items-center justify-center rounded-sm bg-[#8B1538] px-7 py-3.5 font-sans text-sm font-semibold text-white transition-colors hover:bg-[#75112f] md:text-base"
             >
               View Land Viewer
             </Link>
             <Link
-              href="/signup/"
+              href="/signup/?next=/dashboard&intent=add-property"
               className="inline-flex min-h-12 items-center justify-center rounded-sm border border-[#1a1a1a] bg-white/70 px-7 py-3.5 font-sans text-sm font-semibold text-[#1a1a1a] transition-colors hover:bg-[#1a1a1a] hover:text-white md:text-base"
             >
               Add My Property
