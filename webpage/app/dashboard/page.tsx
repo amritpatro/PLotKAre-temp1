@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import {
   AreaChart,
@@ -17,6 +16,8 @@ import { DashboardTopBar } from '@/components/dashboard-topbar'
 import { Plot3DViewerModal } from '@/components/dashboard/plot-3d-viewer-modal'
 import { AddPlotModal } from '@/components/dashboard/add-plot-modal'
 import { loadPlots, type StoredPlot } from '@/lib/plotkare-storage'
+import { loadUserPlots, subscribeToUserPlots } from '@/lib/supabase/data'
+import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
 
 type SparkPoint = { month: string; value: number }
 
@@ -60,30 +61,73 @@ function storedToDisplay(s: StoredPlot): DisplayPlot {
   }
 }
 
+function greetingForDate(date: Date) {
+  const hour = date.getHours()
+  if (hour < 12) return 'Good Morning'
+  if (hour < 17) return 'Good Afternoon'
+  if (hour < 21) return 'Good Evening'
+  return 'Good Night'
+}
+
+function displayNameFromProfile(fullName?: string | null, email?: string | null) {
+  const cleanName = fullName?.trim()
+  if (cleanName) return cleanName
+  const emailName = email?.split('@')[0]?.replace(/[._-]+/g, ' ').trim()
+  return emailName || 'Owner'
+}
+
 export default function DashboardPage() {
-  const router = useRouter()
   const [storedPlots, setStoredPlots] = useState<StoredPlot[]>([])
   const [plot3dOpen, setPlot3dOpen] = useState(false)
   const [plot3dTarget, setPlot3dTarget] = useState<{ id: string; ratio: number } | null>(null)
   const [addPlotOpen, setAddPlotOpen] = useState(false)
+  const [ownerName, setOwnerName] = useState('Owner')
+  const [greeting, setGreeting] = useState(() => greetingForDate(new Date()))
 
-  useEffect(() => {
-    const auth = localStorage.getItem('plotkare_auth')
-    if (auth !== 'true') {
-      router.replace('/login')
+  const refreshPlots = async () => {
+    try {
+      setStoredPlots(await loadUserPlots())
+    } catch {
+      setStoredPlots(loadPlots())
     }
-  }, [router])
-
-  const refreshPlots = () => setStoredPlots(loadPlots())
+  }
 
   useEffect(() => {
-    refreshPlots()
+    const supabase = createSupabaseBrowserClient()
+    let mounted = true
+
+    supabase.auth.getUser().then(async ({ data }) => {
+      if (!mounted || !data.user) return
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name,email')
+        .eq('id', data.user.id)
+        .maybeSingle()
+
+      if (!mounted) return
+      setOwnerName(displayNameFromProfile(profile?.full_name, profile?.email ?? data.user.email))
+    })
+
+    const updateGreeting = () => setGreeting(greetingForDate(new Date()))
+    updateGreeting()
+    const interval = window.setInterval(updateGreeting, 60_000)
+
+    return () => {
+      mounted = false
+      window.clearInterval(interval)
+    }
+  }, [])
+
+  useEffect(() => {
+    void refreshPlots()
     const onStorage = () => refreshPlots()
     window.addEventListener('plotkare-plots-changed', onStorage)
     window.addEventListener('storage', onStorage)
+    const unsubscribe = subscribeToUserPlots(() => void refreshPlots())
     return () => {
       window.removeEventListener('plotkare-plots-changed', onStorage)
       window.removeEventListener('storage', onStorage)
+      unsubscribe()
     }
   }, [])
 
@@ -116,7 +160,7 @@ export default function DashboardPage() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8 font-serif text-3xl font-bold text-[#1F2937]"
           >
-            Good Morning, Ravi Kumar.
+            {greeting}, {ownerName}.
           </motion.h2>
 
           <motion.div
@@ -279,7 +323,7 @@ export default function DashboardPage() {
       <AddPlotModal
         open={addPlotOpen}
         onClose={() => setAddPlotOpen(false)}
-        onSaved={refreshPlots}
+        onSaved={() => void refreshPlots()}
       />
     </div>
   )

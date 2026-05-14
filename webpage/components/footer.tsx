@@ -26,10 +26,10 @@ const footerLinks = {
     { label: 'Madhurawada', href: '/corridors/madhurawada-land-monitoring/' },
   ],
   legal: [
-    { label: 'Privacy Policy', href: '#' },
-    { label: 'Terms of Service', href: '#' },
-    { label: 'Refund Policy', href: '#' },
-    { label: 'Cookie Policy', href: '#' },
+    { label: 'Privacy Policy', href: '/privacy/' },
+    { label: 'Terms of Service', href: '/terms/' },
+    { label: 'Refund Policy', href: '/refund/' },
+    { label: 'Support', href: '/support/' },
   ],
 }
 
@@ -73,6 +73,11 @@ const socialLinks = [
 ]
 
 export function Footer() {
+  const whatsappUrl = process.env.NEXT_PUBLIC_WHATSAPP_URL || 'https://wa.me/'
+  const resolvedSocialLinks = socialLinks.map((social) =>
+    social.name === 'WhatsApp' ? { ...social, href: whatsappUrl } : social,
+  )
+
   return (
     <footer className="bg-darker pt-20 pb-8">
       <div className="mx-auto max-w-[1400px] px-6 lg:px-12">
@@ -102,7 +107,7 @@ export function Footer() {
             
             {/* Social Icons */}
             <div className="mt-6 flex gap-4">
-              {socialLinks.map((social) => (
+              {resolvedSocialLinks.map((social) => (
                 <a
                   key={social.name}
                   href={social.href}

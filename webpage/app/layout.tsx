@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Cormorant_Garamond, DM_Sans, DM_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { JsonLd } from '@/components/json-ld'
+import { PostHogPageview } from '@/components/posthog-pageview'
 import { SITE_NAME, canonicalPageUrl, absoluteUrl, getSiteUrl, withBasePath } from '@/lib/site-config'
 import './globals.css'
 
@@ -126,6 +127,7 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         <JsonLd data={[organizationJsonLd, websiteJsonLd]} />
         {children}
+        <PostHogPageview />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

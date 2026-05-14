@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { LogOut } from 'lucide-react'
@@ -11,6 +12,34 @@ interface DashboardTopBarProps {
 
 export function DashboardTopBar({ title }: DashboardTopBarProps) {
   const router = useRouter()
+  const [initials, setInitials] = useState('PK')
+
+  useEffect(() => {
+    const supabase = createSupabaseBrowserClient()
+    let mounted = true
+
+    supabase.auth.getUser().then(async ({ data }) => {
+      if (!mounted || !data.user) return
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name,email')
+        .eq('id', data.user.id)
+        .maybeSingle()
+
+      if (!mounted) return
+      const label = profile?.full_name?.trim() || profile?.email || data.user.email || 'PlotKare'
+      const parts = label.replace(/@.*/, '').split(/[\s._-]+/).filter(Boolean)
+      const nextInitials = parts
+        .slice(0, 2)
+        .map((part: string) => part[0]?.toUpperCase())
+        .join('')
+      setInitials(nextInitials || 'PK')
+    })
+
+    return () => {
+      mounted = false
+    }
+  }, [])
 
   const handleLogout = async () => {
     const supabase = createSupabaseBrowserClient()
@@ -25,7 +54,7 @@ export function DashboardTopBar({ title }: DashboardTopBarProps) {
         <h1 className="font-serif text-2xl font-bold text-[#1F2937]">{title}</h1>
         <div className="flex items-center gap-4">
           <Avatar className="h-10 w-10 bg-[#C0392B]">
-            <AvatarFallback className="font-mono text-sm font-semibold text-white">RK</AvatarFallback>
+            <AvatarFallback className="font-mono text-sm font-semibold text-white">{initials}</AvatarFallback>
           </Avatar>
           <button
             onClick={() => void handleLogout()}

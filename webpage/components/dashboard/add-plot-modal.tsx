@@ -6,9 +6,8 @@ import { toast } from 'sonner'
 import {
   type StoredPlot,
   type Facing,
-  loadPlots,
-  savePlots,
 } from '@/lib/plotkare-storage'
+import { createUserPlot } from '@/lib/supabase/data'
 import { SIZE_TILES, VIZAG_LOCATIONS } from '@/lib/vizag-form-constants'
 
 function parseSqFromTile(tile: (typeof SIZE_TILES)[number], custom: string): number | null {
@@ -50,6 +49,7 @@ export function AddPlotModal({ open, onClose, onSaved }: AddPlotModalProps) {
   )
 
   const [submitError, setSubmitError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
   const [fieldErr, setFieldErr] = useState({
     plotNumber: false,
     location: false,
@@ -85,9 +85,10 @@ export function AddPlotModal({ open, onClose, onSaved }: AddPlotModalProps) {
     })
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     clearErrors()
+    if (submitting) return
     let ok = true
     const nextErr = { ...fieldErr }
 
@@ -113,10 +114,7 @@ export function AddPlotModal({ open, onClose, onSaved }: AddPlotModalProps) {
     const locationResolved =
       location === 'Other' ? locationOther.trim() : location
 
-    const lastInspection = formatLastInspectionToday()
-
-    const newPlot: StoredPlot = {
-      id: String(Date.now()),
+    const newPlot: Omit<StoredPlot, 'id' | 'status' | 'lastInspection' | 'registeredAt'> = {
       plotNumber: plotNumber.trim(),
       location: locationResolved,
       locationOther: location === 'Other' ? locationOther.trim() : undefined,
@@ -126,27 +124,30 @@ export function AddPlotModal({ open, onClose, onSaved }: AddPlotModalProps) {
       purchasePriceLakhs: 0,
       currentValueLakhs: 0,
       purchaseDate,
-      status: 'active',
-      lastInspection,
-      registeredAt: new Date().toISOString(),
     }
 
-    const current = loadPlots()
-    savePlots([...current, newPlot])
-    toast.success('Plot registered successfully', {
-      position: 'bottom-right',
-      icon: <CheckCircle2 className="h-5 w-5 text-emerald-400" />,
-    })
-    onSaved()
-    onClose()
-    setPlotNumber('')
-    setLocation(VIZAG_LOCATIONS[1])
-    setLocationOther('')
-    setSizeTile(null)
-    setCustomSqYards('')
-    setFacing('East')
-    setCornerPlot(false)
-    setPurchaseDate(new Date().toISOString().slice(0, 10))
+    setSubmitting(true)
+    try {
+      await createUserPlot(newPlot)
+      toast.success('Plot registered successfully', {
+        position: 'bottom-right',
+        icon: <CheckCircle2 className="h-5 w-5 text-emerald-400" />,
+      })
+      onSaved()
+      onClose()
+      setPlotNumber('')
+      setLocation(VIZAG_LOCATIONS[1])
+      setLocationOther('')
+      setSizeTile(null)
+      setCustomSqYards('')
+      setFacing('East')
+      setCornerPlot(false)
+      setPurchaseDate(new Date().toISOString().slice(0, 10))
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : 'Plot registration failed.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   if (!open) return null
@@ -327,9 +328,10 @@ export function AddPlotModal({ open, onClose, onSaved }: AddPlotModalProps) {
 
             <button
               type="submit"
+              disabled={submitting}
               className="w-full rounded-lg bg-[#C0392B] py-4 font-sans text-sm font-semibold text-white transition-opacity hover:opacity-95"
             >
-              Register Plot
+              {submitting ? 'Registering...' : 'Register Plot'}
             </button>
           </form>
         </div>

@@ -8,7 +8,7 @@ import { getCorridorSlugs } from '@/lib/corridor-pages'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date()
-  const core = ['/', '/listings/', '/blog/', '/demo/plot-3d/'].map((path) => ({
+  const core = ['/', '/listings/', '/blog/', '/demo/plot-3d/', '/privacy/', '/terms/', '/refund/', '/support/'].map((path) => ({
     url: canonicalPageUrl(path),
     lastModified,
     changeFrequency: 'weekly' as const,

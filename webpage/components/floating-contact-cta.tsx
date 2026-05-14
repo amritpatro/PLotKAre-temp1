@@ -3,11 +3,11 @@
 import Link from 'next/link'
 import { MessageCircle } from 'lucide-react'
 
-/** Replace href when a staffed WhatsApp Business number is published. */
-const WA_PLACEHOLDER = 'https://wa.me/'
 const MAIL_ENQUIRY = 'mailto:hello@plotkare.in?subject=PlotKare%20enquiry'
 
 export function FloatingContactCta() {
+  const whatsappUrl = process.env.NEXT_PUBLIC_WHATSAPP_URL || 'https://wa.me/'
+
   return (
     <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3 print:hidden">
       <Link
@@ -17,12 +17,12 @@ export function FloatingContactCta() {
         Email us
       </Link>
       <Link
-        href={WA_PLACEHOLDER}
+        href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
-        title="WhatsApp — replace wa.me link when your business number is ready"
+        title="Talk to PlotKare on WhatsApp"
         className="flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-xl ring-2 ring-white/80 transition-transform hover:scale-[1.03] active:scale-[0.98]"
-        aria-label="WhatsApp chat placeholder — update link when number is published"
+        aria-label="Talk to PlotKare on WhatsApp"
       >
         <MessageCircle className="h-7 w-7" aria-hidden />
       </Link>
