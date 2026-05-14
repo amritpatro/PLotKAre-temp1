@@ -19,20 +19,6 @@ import { withBasePath } from '@/lib/site-config'
 import { cn } from '@/lib/utils'
 
 const VIZAG = { lon: 83.2185, lat: 17.6868 }
-const MAP_COLORS = [
-  '#ef6f6c',
-  '#f2c14e',
-  '#77b255',
-  '#70c1d3',
-  '#b388c4',
-  '#f7a1a1',
-  '#a8d672',
-  '#f4d35e',
-  '#90be6d',
-  '#f6bd60',
-  '#8ecae6',
-  '#cdb4db',
-]
 
 function isAndhraPradesh(name: string, iso: string) {
   return iso === 'IN-AP' || name.includes('Andhra Pradesh')
@@ -42,15 +28,7 @@ function isNorthernTerritory(name: string, iso: string) {
   return iso === 'IN-JK' || iso === 'IN-LA' || name.includes('Jammu') || name.includes('Ladakh')
 }
 
-function colorForRegion(name: string, iso: string, index: number) {
-  if (isAndhraPradesh(name, iso)) return '#8B1538'
-  if (isNorthernTerritory(name, iso)) return '#ef4444'
-  let hash = index
-  for (let i = 0; i < name.length; i++) hash = (hash + name.charCodeAt(i) * (i + 3)) % 997
-  return MAP_COLORS[hash % MAP_COLORS.length]
-}
-
-type PathRow = { key: string; name: string; iso: string; d: string; ap: boolean; north: boolean; fill: string }
+type PathRow = { key: string; name: string; iso: string; d: string; ap: boolean; north: boolean }
 
 export function IndiaHeroMap() {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -113,7 +91,6 @@ export function IndiaHeroMap() {
         d,
         ap: isAndhraPradesh(name, iso),
         north: isNorthernTerritory(name, iso),
-        fill: colorForRegion(name, iso, i),
       }
     })
 
@@ -147,6 +124,10 @@ export function IndiaHeroMap() {
           aria-label="Interactive map of India: choose a state or union territory for PlotKare coverage and expansion details"
         >
           <defs>
+            <linearGradient id="plotkareMapBg" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#ffffff" stopOpacity={0.08} />
+              <stop offset="100%" stopColor="#F8F6F3" stopOpacity={0.18} />
+            </linearGradient>
             <filter id="apGlow" x="-60%" y="-60%" width="220%" height="220%">
               <feGaussianBlur stdDeviation="2.8" result="blur" />
               <feMerge>
@@ -156,7 +137,7 @@ export function IndiaHeroMap() {
             </filter>
           </defs>
 
-          <rect width={layout.w} height={layout.h} rx={16} fill="#ffffff" />
+          <rect width={layout.w} height={layout.h} rx={16} fill="url(#plotkareMapBg)" />
 
           <g className="state-layer">
             {layout.paths
@@ -165,12 +146,11 @@ export function IndiaHeroMap() {
                 <path
                   key={p.key}
                   d={p.d}
-                  fill={p.fill}
-                  fillOpacity={0.86}
-                  stroke="#1a1a1a"
-                  strokeOpacity={0.46}
-                  strokeWidth={0.5}
-                  className="cursor-pointer transition-[filter,fill-opacity] duration-200 hover:fill-opacity-100"
+                  fill="rgba(139, 21, 56, 0.04)"
+                  stroke="#C9A962"
+                  strokeOpacity={0.55}
+                  strokeWidth={0.65}
+                  className="cursor-pointer transition-[fill,stroke-opacity] duration-200 hover:fill-[rgba(139,21,56,0.11)]"
                   tabIndex={0}
                   role="button"
                   aria-label={`${p.name}. Opens details about PlotKare in this region.`}
@@ -189,13 +169,12 @@ export function IndiaHeroMap() {
                 <path
                   key={p.key}
                   d={p.d}
-                  fill={p.fill}
-                  fillOpacity={0.92}
-                  stroke="#1a1a1a"
-                  strokeOpacity={0.58}
-                  strokeWidth={0.62}
+                  fill="rgba(139, 21, 56, 0.05)"
+                  stroke="#8B1538"
+                  strokeOpacity={0.52}
+                  strokeWidth={1.1}
                   strokeLinejoin="round"
-                  className="cursor-pointer transition-[filter,fill-opacity] duration-200 hover:fill-opacity-100"
+                  className="cursor-pointer transition-[fill,stroke-opacity] duration-200 hover:fill-[rgba(139,21,56,0.11)]"
                   tabIndex={0}
                   role="button"
                   aria-label={`${p.name}. Northern India coverage context retained in the PlotKare national map.`}
@@ -225,12 +204,11 @@ export function IndiaHeroMap() {
                   ) : null}
                   <path
                     d={p.d}
-                    fill={p.fill}
-                    fillOpacity={0.92}
+                    fill="rgba(139, 21, 56, 0.13)"
                     stroke="#8B1538"
-                    strokeWidth={1.25}
+                    strokeWidth={1.85}
                     strokeLinejoin="round"
-                    className="cursor-pointer transition-[filter,fill-opacity] duration-200 hover:fill-opacity-100"
+                    className="cursor-pointer transition-[fill] duration-200 hover:fill-[rgba(139,21,56,0.2)]"
                     tabIndex={0}
                     role="button"
                     aria-label={`${p.name}. Active coordination starting from Visakhapatnam and coastal Andhra Pradesh.`}
