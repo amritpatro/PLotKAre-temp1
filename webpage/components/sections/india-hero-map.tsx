@@ -1,8 +1,8 @@
 'use client'
 
 /**
- * India admin-1 state map (Natural Earth-derived GeoJSON in /public/geo/india-states.geojson).
- * Regenerate via: scripts/extract-india-states.mjs + Natural Earth ne_50m_admin_1_states_provinces.
+ * India admin-1 state map using full official-position boundaries in /public/geo/india-states.geojson.
+ * The source keeps Jammu & Kashmir and Ladakh complete while the UI preserves PlotKare's pale map theme.
  */
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { FeatureCollection } from 'geojson'
@@ -20,15 +20,33 @@ import { cn } from '@/lib/utils'
 
 const VIZAG = { lon: 83.2185, lat: 17.6868 }
 
+type MapFeatureProps = {
+  name?: unknown
+  iso_3166_2?: unknown
+  NAME_1?: unknown
+  ISO_3166_2?: unknown
+  ST_NM?: unknown
+  st_nm?: unknown
+  STATE?: unknown
+  state?: unknown
+}
+
+function readTextProp(props: MapFeatureProps | null | undefined, keys: Array<keyof MapFeatureProps>, fallback = '') {
+  for (const key of keys) {
+    const value = props?.[key]
+    if (value !== undefined && value !== null && String(value).trim() !== '') {
+      return String(value)
+    }
+  }
+
+  return fallback
+}
+
 function isAndhraPradesh(name: string, iso: string) {
   return iso === 'IN-AP' || name.includes('Andhra Pradesh')
 }
 
-function isNorthernTerritory(name: string, iso: string) {
-  return iso === 'IN-JK' || iso === 'IN-LA' || name.includes('Jammu') || name.includes('Ladakh')
-}
-
-type PathRow = { key: string; name: string; iso: string; d: string; ap: boolean; north: boolean }
+type PathRow = { key: string; name: string; iso: string; d: string; ap: boolean }
 
 export function IndiaHeroMap() {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -81,8 +99,9 @@ export function IndiaHeroMap() {
     const pathGen = geoPath(projection)
 
     const paths: PathRow[] = fc.features.map((feature, i) => {
-      const name = String((feature.properties as { name?: string })?.name ?? 'State / UT')
-      const iso = String((feature.properties as { iso_3166_2?: string })?.iso_3166_2 ?? '')
+      const props = feature.properties as MapFeatureProps | null
+      const name = readTextProp(props, ['name', 'NAME_1', 'ST_NM', 'st_nm', 'STATE', 'state'], 'State / UT')
+      const iso = readTextProp(props, ['iso_3166_2', 'ISO_3166_2'])
       const d = pathGen(feature as Parameters<typeof pathGen>[0]) ?? ''
       return {
         key: `${iso}-${i}`,
@@ -90,7 +109,6 @@ export function IndiaHeroMap() {
         iso,
         d,
         ap: isAndhraPradesh(name, iso),
-        north: isNorthernTerritory(name, iso),
       }
     })
 
@@ -141,7 +159,7 @@ export function IndiaHeroMap() {
 
           <g className="state-layer">
             {layout.paths
-              .filter((p) => !p.ap && !p.north)
+              .filter((p) => !p.ap)
               .map((p) => (
                 <path
                   key={p.key}
@@ -154,30 +172,6 @@ export function IndiaHeroMap() {
                   tabIndex={0}
                   role="button"
                   aria-label={`${p.name}. Opens details about PlotKare in this region.`}
-                  onClick={() => openDialog(p)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault()
-                      openDialog(p)
-                    }
-                  }}
-                />
-              ))}
-            {layout.paths
-              .filter((p) => p.north)
-              .map((p) => (
-                <path
-                  key={p.key}
-                  d={p.d}
-                  fill="rgba(139, 21, 56, 0.05)"
-                  stroke="#8B1538"
-                  strokeOpacity={0.52}
-                  strokeWidth={1.1}
-                  strokeLinejoin="round"
-                  className="cursor-pointer transition-[fill,stroke-opacity] duration-200 hover:fill-[rgba(139,21,56,0.11)]"
-                  tabIndex={0}
-                  role="button"
-                  aria-label={`${p.name}. Northern India coverage context retained in the PlotKare national map.`}
                   onClick={() => openDialog(p)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
