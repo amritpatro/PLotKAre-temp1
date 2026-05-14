@@ -1,20 +1,20 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { LogoMark } from '@/components/logo'
 import { Eye, EyeOff } from 'lucide-react'
-import {
-  ADMIN_CREDENTIALS,
-  readAdminAuth,
-  writeAdminAuth,
-} from '@/lib/admin-auth'
+import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
+import { getSiteUrl } from '@/lib/supabase/env'
+import { loginSchema } from '@/lib/validation/auth'
 
 type AuthLoginMode = 'user' | 'admin'
 
 export function AuthLoginPage({ mode }: { mode: AuthLoginMode }) {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const supabase = createSupabaseBrowserClient()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -22,63 +22,85 @@ export function AuthLoginPage({ mode }: { mode: AuthLoginMode }) {
   const [isSigningIn, setIsSigningIn] = useState(false)
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
-    if (mode === 'user') {
-      if (localStorage.getItem('plotkare_auth') === 'true') {
-        router.replace('/dashboard')
+    let mounted = true
+    supabase.auth.getUser().then(async ({ data }) => {
+      if (!mounted || !data.user) return
+      if (mode === 'admin') {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .maybeSingle()
+        if (profile?.role === 'admin') router.replace('/admin/dashboard')
+        return
       }
-    } else if (readAdminAuth()) {
-      router.replace('/admin/dashboard')
+      router.replace('/dashboard')
+    })
+    return () => {
+      mounted = false
     }
-  }, [router, mode])
+  }, [router, mode, supabase])
 
-  const handleSignIn = () => {
+  const redirectAfterLogin = () => {
+    const next = searchParams.get('next')
+    router.replace(next || (mode === 'admin' ? '/admin/dashboard' : '/dashboard'))
+    router.refresh()
+  }
+
+  const handleSignIn = async () => {
     setError('')
-
-    if (!email || !password) {
-      setError('Please fill in all fields')
+    const parsed = loginSchema.safeParse({ email, password })
+    if (!parsed.success) {
+      setError(parsed.error.issues[0]?.message ?? 'Please fill in all fields')
       return
     }
 
     setIsSigningIn(true)
+    const { data, error: signInError } = await supabase.auth.signInWithPassword(parsed.data)
 
-    if (mode === 'admin') {
-      const ok =
-        email.trim().toLowerCase() === ADMIN_CREDENTIALS.email &&
-        password === ADMIN_CREDENTIALS.password
-      if (ok) {
-        writeAdminAuth()
-        setTimeout(() => {
-          router.replace('/admin/dashboard')
-        }, 600)
-        return
-      }
-      setTimeout(() => {
-        setError('Invalid credentials')
-        setIsSigningIn(false)
-      }, 600)
+    if (signInError) {
+      setError(signInError.message)
+      setIsSigningIn(false)
       return
     }
 
-    if (email === 'temp@temp.temp' && password === 'temp') {
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('plotkare_auth', 'true')
-        localStorage.setItem('plotkare_session_email', email)
-      }
-      setTimeout(() => {
-        router.replace('/dashboard')
-      }, 600)
-    } else {
-      setTimeout(() => {
-        setError('Invalid credentials')
+    if (mode === 'admin') {
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', data.user.id)
+        .maybeSingle()
+
+      if (profileError || profile?.role !== 'admin') {
+        await supabase.auth.signOut()
+        setError('This account does not have admin access.')
         setIsSigningIn(false)
-      }, 600)
+        return
+      }
+    }
+
+    redirectAfterLogin()
+  }
+
+  const handleOAuth = async () => {
+    setError('')
+    setIsSigningIn(true)
+    const next = mode === 'admin' ? '/admin/dashboard' : '/dashboard'
+    const { error: oauthError } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${getSiteUrl()}/auth/callback?next=${encodeURIComponent(next)}`,
+      },
+    })
+    if (oauthError) {
+      setError(oauthError.message)
+      setIsSigningIn(false)
     }
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !isSigningIn) {
-      handleSignIn()
+      void handleSignIn()
     }
   }
 
@@ -100,22 +122,20 @@ export function AuthLoginPage({ mode }: { mode: AuthLoginMode }) {
           <form
             onSubmit={(e) => {
               e.preventDefault()
-              handleSignIn()
+              void handleSignIn()
             }}
             className="space-y-6"
           >
-            <div>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onKeyDown={handleKeyPress}
-                placeholder="your@email.com"
-                disabled={isSigningIn}
-                autoComplete="username"
-                className="w-full bg-transparent border-b border-white/20 px-0 py-3 font-sans text-white placeholder-white/40 focus:border-b-2 focus:border-[#C0392B] focus:outline-none transition-colors disabled:opacity-50"
-              />
-            </div>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={handleKeyPress}
+              placeholder="your@email.com"
+              disabled={isSigningIn}
+              autoComplete="username"
+              className="w-full bg-transparent border-b border-white/20 px-0 py-3 font-sans text-white placeholder-white/40 focus:border-b-2 focus:border-[#C0392B] focus:outline-none transition-colors disabled:opacity-50"
+            />
 
             <div className="relative">
               <input
@@ -134,6 +154,7 @@ export function AuthLoginPage({ mode }: { mode: AuthLoginMode }) {
                 className="absolute right-0 top-3 text-white/60 hover:text-white transition-colors disabled:opacity-50"
                 disabled={isSigningIn}
                 tabIndex={-1}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -142,8 +163,7 @@ export function AuthLoginPage({ mode }: { mode: AuthLoginMode }) {
             {error && <p className="text-red-500 font-sans text-sm">{error}</p>}
 
             <button
-              type="button"
-              onClick={handleSignIn}
+              type="submit"
               disabled={isSigningIn}
               className="w-full bg-[#C0392B] hover:bg-[#A93225] disabled:opacity-50 text-white font-sans text-base font-medium py-3 rounded-sm transition-colors mt-8"
             >
@@ -151,8 +171,19 @@ export function AuthLoginPage({ mode }: { mode: AuthLoginMode }) {
             </button>
           </form>
 
-          <p className="font-sans text-sm text-red-500 text-center">
-            Use temp@temp.temp and password temp
+          <button
+            type="button"
+            onClick={handleOAuth}
+            disabled={isSigningIn}
+            className="w-full rounded-sm border border-white/20 py-3 font-sans text-base font-medium text-white transition-colors hover:bg-white/10 disabled:opacity-50"
+          >
+            Continue with Google
+          </button>
+
+          <p className="font-sans text-sm text-white/70 text-center">
+            <Link href="/forgot-password" className="text-white hover:text-[#D4AF94] font-medium transition-colors">
+              Forgot password?
+            </Link>
           </p>
           <p className="font-sans text-sm text-white/70 text-center">
             Don&apos;t have an account?{' '}

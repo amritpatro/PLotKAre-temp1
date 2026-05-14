@@ -13,7 +13,7 @@ import {
   Settings,
   LogOut,
 } from 'lucide-react'
-import { clearAdminAuth } from '@/lib/admin-auth'
+import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
 
 const items = [
   { href: '/admin/dashboard', label: 'Overview', icon: LayoutDashboard },
@@ -63,8 +63,10 @@ export function AdminSidebar() {
           <button
             type="button"
             onClick={() => {
-              clearAdminAuth()
+              const supabase = createSupabaseBrowserClient()
+              void supabase.auth.signOut()
               router.replace('/admin/login')
+              router.refresh()
             }}
             className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 font-sans text-sm font-medium text-[#C0392B] hover:bg-[#FFF1F2]"
           >

@@ -27,7 +27,7 @@ type DisplayPlot = {
   sizeLabel: string
   sqYards: number
   lastInspection: string
-  valueLabel: string
+  reviewLabel: string
   data: SparkPoint[]
 }
 
@@ -47,24 +47,6 @@ function sparkFromSeed(seed: string): SparkPoint[] {
   }))
 }
 
-function formatPlotCardValueLakhs(lakhs: number): string {
-  if (lakhs >= 100) {
-    return `${(lakhs / 100).toFixed(2)} Cr`
-  }
-  const rounded = Math.round(lakhs * 100) / 100
-  return `${rounded % 1 === 0 ? rounded.toFixed(0) : rounded} Lakhs`
-}
-
-function formatPortfolioFromPlots(plots: StoredPlot[]): string {
-  const sum = plots.reduce((acc, p) => acc + (p.currentValueLakhs || 0), 0)
-  if (sum <= 0) return '0 Lakhs'
-  if (sum < 100) {
-    const r = Math.round(sum * 100) / 100
-    return `${r % 1 === 0 ? r.toFixed(0) : r.toFixed(2)} Lakhs`
-  }
-  return `${(sum / 100).toFixed(2)} Cr`
-}
-
 function storedToDisplay(s: StoredPlot): DisplayPlot {
   return {
     id: s.id,
@@ -73,7 +55,7 @@ function storedToDisplay(s: StoredPlot): DisplayPlot {
     sizeLabel: `${s.sqYards} sq. yards`,
     sqYards: s.sqYards,
     lastInspection: s.lastInspection,
-    valueLabel: formatPlotCardValueLakhs(s.currentValueLakhs),
+    reviewLabel: 'Consult for valuation',
     data: sparkFromSeed(s.id + s.plotNumber),
   }
 }
@@ -108,7 +90,10 @@ export default function DashboardPage() {
   const displayPlots = useMemo(() => storedPlots.map(storedToDisplay), [storedPlots])
 
   const plotsRegistered = storedPlots.length
-  const portfolioLabel = useMemo(() => formatPortfolioFromPlots(storedPlots), [storedPlots])
+  const portfolioReviewLabel = useMemo(
+    () => (storedPlots.length > 0 ? 'Advisor review ready' : 'Book Demo'),
+    [storedPlots.length],
+  )
 
   const open3d = (plot: DisplayPlot) => {
     setPlot3dTarget({
@@ -145,8 +130,8 @@ export default function DashboardPage() {
               <p className="mt-3 font-mono text-2xl font-bold text-[#C0392B]">{plotsRegistered}</p>
             </div>
             <div className="rounded-xl border border-[#E5E7EB] border-l-[3px] border-l-[#F59E0B] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
-              <p className="font-mono text-xs text-[#6B7280]">Portfolio Value</p>
-              <p className="mt-3 font-mono text-2xl font-bold text-[#F59E0B]">{portfolioLabel}</p>
+              <p className="font-mono text-xs text-[#6B7280]">Portfolio Review</p>
+              <p className="mt-3 font-mono text-2xl font-bold text-[#F59E0B]">{portfolioReviewLabel}</p>
             </div>
             <div className="rounded-xl border border-[#E5E7EB] border-l-[3px] border-l-[#16A34A] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
               <p className="font-mono text-xs text-[#6B7280]">Encroachments</p>
@@ -170,7 +155,7 @@ export default function DashboardPage() {
                 You have no plots registered yet
               </h3>
               <p className="mt-3 max-w-md font-sans text-sm leading-relaxed text-[#6B7280] md:text-base">
-                Add your first plot to start monitoring and growing its value
+                Add your first plot to start monitoring, inspection, and advisor-led valuation review.
               </p>
               <button
                 type="button"
@@ -202,8 +187,10 @@ export default function DashboardPage() {
                     </div>
 
                     <div className="mb-6 flex items-center justify-between border-b border-[#E5E7EB] pb-4">
-                      <span className="font-mono text-xs text-[#9CA3AF]">Current Value</span>
-                      <p className="font-mono text-2xl font-bold text-[#F59E0B]">{plot.valueLabel}</p>
+                      <span className="font-mono text-xs text-[#9CA3AF]">Advisory Status</span>
+                      <p className="font-mono text-sm font-bold uppercase tracking-wide text-[#F59E0B]">
+                        {plot.reviewLabel}
+                      </p>
                     </div>
 
                     <div className="mb-6 h-24 rounded-lg bg-[#F3F4F6] px-1 py-1">

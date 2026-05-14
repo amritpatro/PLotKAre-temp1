@@ -58,6 +58,9 @@ export function PlotVisualizationSection() {
             <div className="mt-10 rounded-lg border border-border bg-white p-5 shadow-sm">
               <div className="flex items-start justify-between gap-4">
                 <div>
+                  <p className="mb-2 inline-flex rounded-full border border-primary/20 bg-primary/10 px-2 py-1 font-mono text-[9px] font-bold uppercase tracking-wide text-primary">
+                    PLOTKARE VERIFIED
+                  </p>
                   <p className="font-mono text-[11px] uppercase tracking-wide text-muted-foreground">Selected plot</p>
                   <h3 className="mt-1 font-serif text-3xl font-bold text-primary">Plot {selectedProfile.plotNumber}</h3>
                 </div>

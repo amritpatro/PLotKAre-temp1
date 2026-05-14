@@ -3,7 +3,7 @@
 const activities = [
   'New customer registered — Priya Sharma',
   'Plot VZG-047 inspection due in 3 days',
-  'Payment received Rs 1,999 — Ravi Kumar',
+  'Consultation booked — Ravi Kumar',
   'Listing PLT-KMD-008 received 2 new inquiries',
   'Amenity toggle: CCTV Camera Setup set inactive',
 ]
@@ -28,8 +28,8 @@ export default function AdminOverviewPage() {
           <p className="mt-2 font-mono text-3xl font-bold text-[#C0392B]">3</p>
         </div>
         <div className="rounded-xl border border-[#E5E7EB] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
-          <p className="font-mono text-xs text-[#6B7280]">Monthly Revenue</p>
-          <p className="mt-2 font-mono text-3xl font-bold text-[#F59E0B]">Rs 5,997</p>
+          <p className="font-mono text-xs text-[#6B7280]">Consultation Pipeline</p>
+          <p className="mt-2 font-mono text-3xl font-bold text-[#F59E0B]">Active</p>
         </div>
       </div>
 

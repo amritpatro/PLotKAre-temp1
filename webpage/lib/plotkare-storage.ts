@@ -15,7 +15,7 @@ export type StoredPlot = {
   facing: Facing
   cornerPlot: boolean
   purchasePriceLakhs: number
-  /** Estimated / tracked current value in ₹ Lakhs */
+  /** Estimated / tracked current value kept internal for future valuation workflows */
   currentValueLakhs: number
   purchaseDate: string
   status: 'active'

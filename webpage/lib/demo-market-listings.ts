@@ -98,22 +98,18 @@ export function saveMarketListings(list: MarketListing[]) {
   emit()
 }
 
-export function formatLakhsPrice(lakhs: number): string {
-  if (lakhs >= 100) {
-    const cr = lakhs / 100
-    return `${cr % 1 === 0 ? cr.toFixed(0) : cr.toFixed(2)} Cr`
-  }
-  return `${lakhs} Lakhs`
+export function formatConsultationPrice(_value: number): string {
+  return 'Consult after verification'
 }
 
-export type ListingFilter = 'All Plots' | 'Under 50 Lakhs' | 'Above 50 Lakhs' | 'Corner Plots'
+export type ListingFilter = 'All Plots' | 'Verified Plots' | 'Site Visit Ready' | 'Corner Plots'
 
 export function filterMarketListings(
   list: MarketListing[],
   filter: ListingFilter,
 ): MarketListing[] {
-  if (filter === 'Under 50 Lakhs') return list.filter((p) => p.priceLakhs < 50)
-  if (filter === 'Above 50 Lakhs') return list.filter((p) => p.priceLakhs >= 50)
+  if (filter === 'Verified Plots') return list
+  if (filter === 'Site Visit Ready') return list
   if (filter === 'Corner Plots') return list.filter((p) => p.cornerPlot)
   return list
 }

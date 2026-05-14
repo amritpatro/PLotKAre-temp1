@@ -11,8 +11,8 @@ const steps = [
   },
   {
     number: '02',
-    title: 'Choose Your Plan',
-    description: 'Select Monthly, Quarterly, or Annual monitoring. Plans start from Rs. 999 per month with flexible options.',
+    title: 'Book a Consultation',
+    description: 'Choose a monitoring cadence with the team after your property location, access, and documents are reviewed.',
   },
   {
     number: '03',

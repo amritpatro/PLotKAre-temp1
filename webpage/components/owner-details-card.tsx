@@ -52,8 +52,8 @@ export const OwnerDetailsCard = forwardRef<HTMLDivElement, OwnerDetailsCardProps
           <p className="font-mono text-sm font-medium text-foreground">28 April 2026</p>
         </div>
         <div>
-          <p className="font-mono text-xs text-muted-foreground">Estimated Value</p>
-          <p className="font-mono text-sm font-semibold text-primary">68 Lakhs</p>
+          <p className="font-mono text-xs text-muted-foreground">Advisory Status</p>
+          <p className="font-mono text-sm font-semibold text-primary">Consult for valuation</p>
         </div>
       </div>
 

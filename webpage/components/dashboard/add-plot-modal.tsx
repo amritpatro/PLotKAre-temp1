@@ -9,7 +9,7 @@ import {
   loadPlots,
   savePlots,
 } from '@/lib/plotkare-storage'
-import { PRICE_TILES, SIZE_TILES, VIZAG_LOCATIONS } from '@/lib/vizag-form-constants'
+import { SIZE_TILES, VIZAG_LOCATIONS } from '@/lib/vizag-form-constants'
 
 function parseSqFromTile(tile: (typeof SIZE_TILES)[number], custom: string): number | null {
   if (tile === 'Custom') {
@@ -43,12 +43,6 @@ export function AddPlotModal({ open, onClose, onSaved }: AddPlotModalProps) {
   const [locationOther, setLocationOther] = useState('')
   const [sizeTile, setSizeTile] = useState<(typeof SIZE_TILES)[number] | null>(null)
   const [customSqYards, setCustomSqYards] = useState('')
-  const [purchasePriceLabel, setPurchasePriceLabel] = useState<
-    (typeof PRICE_TILES)[number]['label'] | null
-  >(null)
-  const [currentValueLabel, setCurrentValueLabel] = useState<
-    (typeof PRICE_TILES)[number]['label'] | null
-  >(null)
   const [facing, setFacing] = useState<Facing>('East')
   const [cornerPlot, setCornerPlot] = useState(false)
   const [purchaseDate, setPurchaseDate] = useState(() =>
@@ -60,8 +54,6 @@ export function AddPlotModal({ open, onClose, onSaved }: AddPlotModalProps) {
     plotNumber: false,
     location: false,
     size: false,
-    purchase: false,
-    currentValue: false,
   })
 
   useEffect(() => {
@@ -82,16 +74,7 @@ export function AddPlotModal({ open, onClose, onSaved }: AddPlotModalProps) {
     }
   }, [open])
 
-  useEffect(() => {
-    if (purchasePriceLabel) {
-      setCurrentValueLabel(purchasePriceLabel)
-    }
-  }, [purchasePriceLabel])
-
   const sqPreview = sizeTile ? parseSqFromTile(sizeTile, customSqYards) : null
-
-  const purchaseLakhs = PRICE_TILES.find((p) => p.label === purchasePriceLabel)?.lakhs ?? null
-  const currentLakhs = PRICE_TILES.find((p) => p.label === currentValueLabel)?.lakhs ?? null
 
   const clearErrors = () => {
     setSubmitError('')
@@ -99,8 +82,6 @@ export function AddPlotModal({ open, onClose, onSaved }: AddPlotModalProps) {
       plotNumber: false,
       location: false,
       size: false,
-      purchase: false,
-      currentValue: false,
     })
   }
 
@@ -123,15 +104,6 @@ export function AddPlotModal({ open, onClose, onSaved }: AddPlotModalProps) {
       nextErr.size = true
       ok = false
     }
-    if (!purchasePriceLabel || purchaseLakhs == null) {
-      nextErr.purchase = true
-      ok = false
-    }
-    if (!currentValueLabel || currentLakhs == null) {
-      nextErr.currentValue = true
-      ok = false
-    }
-
     if (!ok) {
       setFieldErr(nextErr)
       setSubmitError('Please complete all required fields.')
@@ -151,8 +123,8 @@ export function AddPlotModal({ open, onClose, onSaved }: AddPlotModalProps) {
       sqYards: sq!,
       facing,
       cornerPlot,
-      purchasePriceLakhs: purchaseLakhs!,
-      currentValueLakhs: currentLakhs!,
+      purchasePriceLakhs: 0,
+      currentValueLakhs: 0,
       purchaseDate,
       status: 'active',
       lastInspection,
@@ -172,8 +144,6 @@ export function AddPlotModal({ open, onClose, onSaved }: AddPlotModalProps) {
     setLocationOther('')
     setSizeTile(null)
     setCustomSqYards('')
-    setPurchasePriceLabel(null)
-    setCurrentValueLabel(null)
     setFacing('East')
     setCornerPlot(false)
     setPurchaseDate(new Date().toISOString().slice(0, 10))
@@ -295,62 +265,6 @@ export function AddPlotModal({ open, onClose, onSaved }: AddPlotModalProps) {
               {sqPreview != null && (
                 <p className="mt-3 font-mono text-sm text-[#9CA3AF]">
                   3D plot will be generated for {sqPreview} sq yards.
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label className="font-mono text-xs text-[#6B7280]">Purchase Price</label>
-              <div
-                className={`mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4 md:grid-cols-5 ${
-                  fieldErr.purchase ? 'rounded-xl p-1 ring-2 ring-red-500' : ''
-                }`}
-              >
-                {PRICE_TILES.map(({ label }) => (
-                  <button
-                    key={label}
-                    type="button"
-                    onClick={() => setPurchasePriceLabel(label)}
-                    className={
-                      tileBase +
-                      (purchasePriceLabel === label ? tileSelected : tileUnselected)
-                    }
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-              {purchasePriceLabel && purchaseLakhs != null && (
-                <p className="mt-3 font-mono text-sm text-[#F59E0B]">
-                  Purchase price set to {purchasePriceLabel}.
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label className="font-mono text-xs text-[#6B7280]">Current Value</label>
-              <div
-                className={`mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4 md:grid-cols-5 ${
-                  fieldErr.currentValue ? 'rounded-xl p-1 ring-2 ring-red-500' : ''
-                }`}
-              >
-                {PRICE_TILES.map(({ label }) => (
-                  <button
-                    key={`cv-${label}`}
-                    type="button"
-                    onClick={() => setCurrentValueLabel(label)}
-                    className={
-                      tileBase +
-                      (currentValueLabel === label ? tileSelected : tileUnselected)
-                    }
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-              {currentValueLabel && currentLakhs != null && (
-                <p className="mt-3 font-mono text-sm text-[#F59E0B]">
-                  Current value set to {currentValueLabel}.
                 </p>
               )}
             </div>

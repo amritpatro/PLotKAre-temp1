@@ -38,10 +38,8 @@ export default function AdminAmenitiesPage() {
               <div>
                 <p className="font-medium text-[#1F2937]">{a.name}</p>
                 <p className="font-mono text-xs text-[#9CA3AF]">{a.category}</p>
-                <p className="mt-1 font-mono text-sm text-[#F59E0B]">
-                  {a.kind === 'monthly'
-                    ? `₹${a.amount.toLocaleString('en-IN')}/mo`
-                    : `One-time ₹${a.amount.toLocaleString('en-IN')}`}
+                <p className="mt-1 font-mono text-sm font-semibold uppercase tracking-wide text-[#F59E0B]">
+                  Consult for scope
                 </p>
               </div>
               <button

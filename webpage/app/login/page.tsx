@@ -1,7 +1,12 @@
 'use client'
 
+import { Suspense } from 'react'
 import { AuthLoginPage } from '@/components/auth-login-page'
 
 export default function LoginPage() {
-  return <AuthLoginPage mode="user" />
+  return (
+    <Suspense fallback={null}>
+      <AuthLoginPage mode="user" />
+    </Suspense>
+  )
 }

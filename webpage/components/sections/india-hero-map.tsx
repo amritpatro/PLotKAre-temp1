@@ -19,6 +19,18 @@ import { withBasePath } from '@/lib/site-config'
 import { cn } from '@/lib/utils'
 
 const VIZAG = { lon: 83.2185, lat: 17.6868 }
+const NORTHERN_CONTEXT_RING: [number, number][] = [
+  [73.25, 35.75],
+  [74.65, 37.1],
+  [76.6, 37.72],
+  [78.65, 36.95],
+  [79.3, 35.45],
+  [78.35, 34.35],
+  [76.55, 34.65],
+  [74.8, 34.35],
+  [73.45, 35.05],
+  [73.25, 35.75],
+]
 
 /** Illustrative owner-origin cities for the national property network story. */
 const GLOBAL_ANCHORS = [
@@ -32,7 +44,11 @@ function isAndhraPradesh(name: string, iso: string) {
   return iso === 'IN-AP' || name.includes('Andhra Pradesh')
 }
 
-type PathRow = { key: string; name: string; iso: string; d: string; ap: boolean }
+function isNorthernTerritory(name: string, iso: string) {
+  return iso === 'IN-JK' || iso === 'IN-LA' || name.includes('Jammu') || name.includes('Ladakh')
+}
+
+type PathRow = { key: string; name: string; iso: string; d: string; ap: boolean; north: boolean }
 
 export function IndiaHeroMap() {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -73,6 +89,7 @@ export function IndiaHeroMap() {
         paths: [] as PathRow[],
         vizag: null as [number, number] | null,
         lines: [] as { key: string; d: string }[],
+        northContext: '',
       }
     }
 
@@ -95,8 +112,15 @@ export function IndiaHeroMap() {
         iso,
         d,
         ap: isAndhraPradesh(name, iso),
+        north: isNorthernTerritory(name, iso),
       }
     })
+
+    const northProjected = NORTHERN_CONTEXT_RING.map((point) => projection(point)).filter(Boolean) as [number, number][]
+    const northContext =
+      northProjected.length > 1
+        ? northProjected.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p[0]} ${p[1]}`).join(' ') + ' Z'
+        : ''
 
     const v = projection([VIZAG.lon, VIZAG.lat])
     const vizag: [number, number] | null = v ? [v[0]!, v[1]!] : null
@@ -113,7 +137,7 @@ export function IndiaHeroMap() {
       }
     }
 
-    return { w, h, paths, vizag, lines }
+    return { w, h, paths, vizag, lines, northContext }
   }, [fc])
 
   useLayoutEffect(() => {
@@ -173,7 +197,7 @@ export function IndiaHeroMap() {
 
           <g className="state-layer">
             {layout.paths
-              .filter((p) => !p.ap)
+              .filter((p) => !p.ap && !p.north)
               .map((p) => (
                 <path
                   key={p.key}
@@ -186,6 +210,42 @@ export function IndiaHeroMap() {
                   tabIndex={0}
                   role="button"
                   aria-label={`${p.name}. Opens details about PlotKare in this region.`}
+                  onClick={() => openDialog(p)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      openDialog(p)
+                    }
+                  }}
+                />
+              ))}
+            {layout.northContext ? (
+              <path
+                d={layout.northContext}
+                fill="rgba(201, 169, 98, 0.08)"
+                stroke="#8B1538"
+                strokeOpacity={0.42}
+                strokeWidth={0.95}
+                strokeDasharray="4 3"
+                className="pointer-events-none"
+                aria-hidden="true"
+              />
+            ) : null}
+            {layout.paths
+              .filter((p) => p.north)
+              .map((p) => (
+                <path
+                  key={p.key}
+                  d={p.d}
+                  fill="rgba(201, 169, 98, 0.14)"
+                  stroke="#8B1538"
+                  strokeOpacity={0.72}
+                  strokeWidth={0.95}
+                  strokeLinejoin="round"
+                  className="cursor-pointer transition-[fill,stroke-opacity] duration-200 hover:fill-[rgba(201,169,98,0.2)]"
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`${p.name}. Northern India coverage context retained in the PlotKare national map.`}
                   onClick={() => openDialog(p)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {

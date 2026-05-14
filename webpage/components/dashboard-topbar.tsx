@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { LogOut } from 'lucide-react'
+import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
 
 interface DashboardTopBarProps {
   title: string
@@ -11,9 +12,11 @@ interface DashboardTopBarProps {
 export function DashboardTopBar({ title }: DashboardTopBarProps) {
   const router = useRouter()
 
-  const handleLogout = () => {
-    localStorage.removeItem('plotkare_auth')
+  const handleLogout = async () => {
+    const supabase = createSupabaseBrowserClient()
+    await supabase.auth.signOut()
     router.replace('/')
+    router.refresh()
   }
 
   return (
@@ -25,7 +28,7 @@ export function DashboardTopBar({ title }: DashboardTopBarProps) {
             <AvatarFallback className="font-mono text-sm font-semibold text-white">RK</AvatarFallback>
           </Avatar>
           <button
-            onClick={handleLogout}
+            onClick={() => void handleLogout()}
             className="flex items-center gap-2 rounded-sm border border-[#E5E7EB] px-4 py-2 text-sm font-medium text-[#6B7280] transition-colors hover:bg-[#F9FAFB]"
           >
             <LogOut size={16} className="text-[#C0392B]" />

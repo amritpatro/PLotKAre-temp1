@@ -14,29 +14,27 @@ export default function AdminPaymentsPage() {
     date: '',
     customerName: '',
     description: '',
-    amount: '',
-    status: 'Paid',
+    status: 'Recorded',
   })
 
   useEffect(() => setRows(loadAdminPayments()), [])
 
   const add = (e: React.FormEvent) => {
     e.preventDefault()
-    const amount = parseInt(form.amount, 10)
-    if (!form.date || !form.customerName || !Number.isFinite(amount)) return
+    if (!form.date || !form.customerName) return
     const row: AdminPaymentRow = {
       id: `pay-${Date.now()}`,
       date: form.date,
       customerName: form.customerName.trim(),
       description: form.description.trim(),
-      amount,
+      amount: 0,
       status: form.status,
     }
     const next = [row, ...rows]
     saveAdminPayments(next)
     setRows(next)
     setOpen(false)
-    setForm({ date: '', customerName: '', description: '', amount: '', status: 'Paid' })
+    setForm({ date: '', customerName: '', description: '', status: 'Recorded' })
   }
 
   return (
@@ -44,14 +42,14 @@ export default function AdminPaymentsPage() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="font-serif text-2xl font-bold text-[#1F2937]">Payments</h1>
-          <p className="mt-1 font-sans text-sm text-[#9CA3AF]">Recorded transactions</p>
+          <p className="mt-1 font-sans text-sm text-[#9CA3AF]">Consultation and service records</p>
         </div>
         <button
           type="button"
           onClick={() => setOpen(true)}
           className="rounded-lg bg-[#C0392B] px-4 py-2 text-sm font-semibold text-white"
         >
-          Add Payment
+          Add Consultation Record
         </button>
       </div>
 
@@ -62,7 +60,6 @@ export default function AdminPaymentsPage() {
               <th className="px-3 py-3">Date</th>
               <th className="px-3 py-3">Customer</th>
               <th className="px-3 py-3">Description</th>
-              <th className="px-3 py-3">Amount</th>
               <th className="px-3 py-3">Status</th>
             </tr>
           </thead>
@@ -72,7 +69,6 @@ export default function AdminPaymentsPage() {
                 <td className="px-3 py-3 text-[#6B7280]">{r.date}</td>
                 <td className="px-3 py-3 text-[#1F2937]">{r.customerName}</td>
                 <td className="px-3 py-3 text-[#6B7280]">{r.description}</td>
-                <td className="px-3 py-3 font-mono text-[#F59E0B]">Rs {r.amount.toLocaleString('en-IN')}</td>
                 <td className="px-3 py-3 text-[#16A34A]">{r.status}</td>
               </tr>
             ))}
@@ -86,7 +82,7 @@ export default function AdminPaymentsPage() {
             onSubmit={add}
             className="w-full max-w-md rounded-xl border border-[#E5E7EB] bg-white p-6 shadow-xl"
           >
-            <h2 className="font-serif text-lg font-semibold text-[#1F2937]">Manual payment</h2>
+            <h2 className="font-serif text-lg font-semibold text-[#1F2937]">Manual consultation record</h2>
             <div className="mt-4 space-y-3">
               <input
                 placeholder="Date (e.g. 01 May 2026)"
@@ -108,20 +104,13 @@ export default function AdminPaymentsPage() {
                 onChange={(e) => setForm((s) => ({ ...s, description: e.target.value }))}
                 className="w-full rounded-lg border border-[#D1D5DB] px-3 py-2"
               />
-              <input
-                placeholder="Amount (INR)"
-                required
-                type="number"
-                value={form.amount}
-                onChange={(e) => setForm((s) => ({ ...s, amount: e.target.value }))}
-                className="w-full rounded-lg border border-[#D1D5DB] px-3 py-2"
-              />
               <select
                 value={form.status}
                 onChange={(e) => setForm((s) => ({ ...s, status: e.target.value }))}
                 className="w-full rounded-lg border border-[#D1D5DB] px-3 py-2"
               >
-                <option>Paid</option>
+                <option>Recorded</option>
+                <option>Advisor review</option>
                 <option>Pending</option>
               </select>
             </div>

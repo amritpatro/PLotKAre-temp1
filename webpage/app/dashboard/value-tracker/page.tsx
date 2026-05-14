@@ -29,17 +29,17 @@ const chartData = [
 const comparison = [
   {
     plot: 'VZG-047',
-    purchase: '52 Lakhs',
-    current: '68 Lakhs',
-    gain: '16 Lakhs',
-    percentage: '+30.8%',
+    purchase: 'Baseline captured',
+    current: 'Advisor review ready',
+    gain: 'Improving',
+    percentage: 'Strong',
   },
   {
     plot: 'VZG-112',
-    purchase: '46 Lakhs',
-    current: '58 Lakhs',
-    gain: '12 Lakhs',
-    percentage: '+26.1%',
+    purchase: 'Baseline captured',
+    current: 'Consultation ready',
+    gain: 'Improving',
+    percentage: 'Positive',
   },
 ]
 
@@ -53,7 +53,7 @@ export default function ValueTrackerPage() {
 
         <div className="space-y-8 px-8 pb-12 pt-24">
           <div className="rounded-xl border border-[#E5E7EB] bg-white p-8 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
-            <h3 className="mb-6 font-serif text-xl font-bold text-[#1F2937]">12-Month Value Growth</h3>
+            <h3 className="mb-6 font-serif text-xl font-bold text-[#1F2937]">12-Month Value Signal</h3>
             <ResponsiveContainer width="100%" height={400}>
               <AreaChart data={chartData}>
                 <defs>
@@ -108,14 +108,14 @@ export default function ValueTrackerPage() {
                       Plot
                     </th>
                     <th className="px-4 py-3 text-left font-mono text-xs font-semibold text-[#9CA3AF]">
-                      Purchase Price
+                      Baseline
                     </th>
                     <th className="px-4 py-3 text-left font-mono text-xs font-semibold text-[#9CA3AF]">
-                      Current Value
+                      Current Review
                     </th>
-                    <th className="px-4 py-3 text-left font-mono text-xs font-semibold text-[#9CA3AF]">Gain</th>
+                    <th className="px-4 py-3 text-left font-mono text-xs font-semibold text-[#9CA3AF]">Signal</th>
                     <th className="px-4 py-3 text-left font-mono text-xs font-semibold text-[#9CA3AF]">
-                      Percentage
+                      Confidence
                     </th>
                   </tr>
                 </thead>

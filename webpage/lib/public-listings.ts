@@ -58,7 +58,7 @@ export const DEFAULT_PUBLIC_LISTINGS: PublicPlotListing[] = [
     cornerPlot: true,
     premium: false,
     priceLakhs: 72,
-    priceDisplay: '72 Lakhs',
+    priceDisplay: 'Consult after verification',
     imageUrl: LISTING_IMAGES.plot,
     status: 'Active',
     inquiriesCount: 2,
@@ -74,7 +74,7 @@ export const DEFAULT_PUBLIC_LISTINGS: PublicPlotListing[] = [
     cornerPlot: false,
     premium: true,
     priceLakhs: 95,
-    priceDisplay: '95 Lakhs',
+    priceDisplay: 'Consult after verification',
     imageUrl: LISTING_IMAGES.premiumPlot,
     status: 'Active',
     inquiriesCount: 5,
@@ -90,7 +90,7 @@ export const DEFAULT_PUBLIC_LISTINGS: PublicPlotListing[] = [
     cornerPlot: false,
     premium: true,
     priceLakhs: 135,
-    priceDisplay: '1.35 Cr',
+    priceDisplay: 'Consult after verification',
     imageUrl: LISTING_IMAGES.apartment,
     status: 'Active',
     inquiriesCount: 3,
@@ -108,7 +108,7 @@ export const DEFAULT_PUBLIC_LISTINGS: PublicPlotListing[] = [
     cornerPlot: false,
     premium: false,
     priceLakhs: 48,
-    priceDisplay: '48 Lakhs',
+    priceDisplay: 'Consult after verification',
     imageUrl: LISTING_IMAGES.town,
     status: 'Active',
     inquiriesCount: 1,
@@ -124,7 +124,7 @@ export const DEFAULT_PUBLIC_LISTINGS: PublicPlotListing[] = [
     cornerPlot: false,
     premium: false,
     priceLakhs: 68,
-    priceDisplay: '68 Lakhs',
+    priceDisplay: 'Consult after verification',
     imageUrl: LISTING_IMAGES.town,
     status: 'Active',
     inquiriesCount: 0,
@@ -159,7 +159,7 @@ function normalizeListing(raw: Record<string, unknown>): PublicPlotListing | nul
     cornerPlot,
     premium,
     priceLakhs,
-    priceDisplay: String(raw.priceDisplay ?? base?.priceDisplay ?? `${priceLakhs} Lakhs`),
+    priceDisplay: String(raw.priceDisplay ?? base?.priceDisplay ?? 'Consult after verification'),
     imageUrl: getLocalListingImage({
       id,
       propertyKind,
@@ -202,8 +202,8 @@ export function savePublicListings(listings: PublicPlotListing[]) {
 
 export type ListingFilter =
   | 'All Plots'
-  | 'Under 50 Lakhs'
-  | 'Above 50 Lakhs'
+  | 'Verified Plots'
+  | 'Site Visit Ready'
   | 'Corner Plots'
   | 'Apartments'
 
@@ -212,8 +212,8 @@ export function filterPublicListings(
   filter: ListingFilter,
 ): PublicPlotListing[] {
   const active = listings.filter((p) => p.status === 'Active')
-  if (filter === 'Under 50 Lakhs') return active.filter((p) => p.priceLakhs < 50)
-  if (filter === 'Above 50 Lakhs') return active.filter((p) => p.priceLakhs >= 50)
+  if (filter === 'Verified Plots') return active.filter((p) => p.propertyKind === 'plot')
+  if (filter === 'Site Visit Ready') return active
   if (filter === 'Corner Plots') return active.filter((p) => p.cornerPlot)
   if (filter === 'Apartments') return active.filter((p) => p.propertyKind === 'apartment')
   return active

@@ -18,14 +18,6 @@ import {
   type PlanTier,
 } from '@/lib/plotkare-storage'
 
-const GST_RATE = 0.18
-
-const PLAN_PRICES: Record<PlanTier, number> = {
-  basic: 999,
-  standard: 1999,
-  premium: 3999,
-}
-
 const PLAN_LABEL: Record<PlanTier, string> = {
   basic: 'Basic Plan',
   standard: 'Standard Plan',
@@ -33,59 +25,33 @@ const PLAN_LABEL: Record<PlanTier, string> = {
 }
 
 const PLAN_AMENITY_BLURB: Record<PlanTier, string[]> = {
-  basic: ['Monthly inspection PDF reports', 'Email support', 'Up to 2 amenity add-ons'],
+  basic: ['Inspection PDF reports', 'Email support', 'Starter amenity review'],
   standard: [
     'Everything in Basic',
     'Legal encroachment monitoring',
     'Priority WhatsApp with field agent',
-    'Recommended amenity bundle discounts',
+    'Amenity planning consultation',
   ],
   premium: [
     'Everything in Standard',
-    'Weekly drone boundary snapshots',
+    'Drone boundary snapshots',
     'Dedicated relationship manager',
-    'Premium amenity concierge & faster installs',
+    'Concierge coordination for selected services',
   ],
 }
 
 type HistoryRow = {
   date: string
   description: string
-  amount: number
   status: string
 }
 
 const DEMO_HISTORY: HistoryRow[] = [
-  {
-    date: 'Apr 2026',
-    description: 'Standard Plan — monthly subscription',
-    amount: 1999,
-    status: 'Paid',
-  },
-  {
-    date: 'Mar 2026',
-    description: 'Solar Panel Hosting (amenity)',
-    amount: 1500,
-    status: 'Paid',
-  },
-  {
-    date: 'Mar 2026',
-    description: 'Standard Plan — monthly subscription',
-    amount: 1999,
-    status: 'Paid',
-  },
-  {
-    date: 'Feb 2026',
-    description: 'Container Farming Lease (amenity)',
-    amount: 800,
-    status: 'Paid',
-  },
-  {
-    date: 'Feb 2026',
-    description: 'Standard Plan — monthly subscription',
-    amount: 1999,
-    status: 'Paid',
-  },
+  { date: 'Apr 2026', description: 'Standard Plan consultation record', status: 'Recorded' },
+  { date: 'Mar 2026', description: 'Solar hosting scope review', status: 'Advisor review' },
+  { date: 'Mar 2026', description: 'Monitoring cadence confirmation', status: 'Recorded' },
+  { date: 'Feb 2026', description: 'Container farming feasibility review', status: 'Advisor review' },
+  { date: 'Feb 2026', description: 'Owner service consultation', status: 'Recorded' },
 ]
 
 export default function PaymentsPage() {
@@ -111,48 +77,33 @@ export default function PaymentsPage() {
     }
   }, [])
 
-  const planAmount = PLAN_PRICES[plan]
-
-  const { displayRows, recurringSubtotal } = useMemo(() => {
-    const rows: { label: string; detail: string; recurringAmount: number | null }[] = []
-    rows.push({
-      label: PLAN_LABEL[plan],
-      detail: 'Monthly subscription',
-      recurringAmount: planAmount,
-    })
-
-    let recurring = planAmount
+  const displayRows = useMemo(() => {
+    const rows: { label: string; detail: string; status: string }[] = [
+      {
+        label: PLAN_LABEL[plan],
+        detail: 'Service scope reviewed by PlotKare advisor',
+        status: 'Active',
+      },
+    ]
 
     for (const name of amenityNames) {
-      const a = getAmenityByName(name)
-      if (!a) continue
-      if (a.kind === 'monthly') {
-        rows.push({
-          label: a.name,
-          detail: `Monthly — Rs ${a.amount.toLocaleString('en-IN')}`,
-          recurringAmount: a.amount,
-        })
-        recurring += a.amount
-      } else {
-        rows.push({
-          label: a.name,
-          detail: 'One-time charge already processed',
-          recurringAmount: null,
-        })
-      }
+      const amenity = getAmenityByName(name)
+      if (!amenity) continue
+      rows.push({
+        label: amenity.name,
+        detail: 'Pricing and feasibility shared only after consultation',
+        status: amenity.kind === 'monthly' ? 'Recurring scope' : 'One-time scope',
+      })
     }
 
-    return { displayRows: rows, recurringSubtotal: recurring }
-  }, [plan, planAmount, amenityNames])
-
-  const gst = recurringSubtotal * GST_RATE
-  const totalDue = recurringSubtotal + gst
+    return rows
+  }, [plan, amenityNames])
 
   const selectPlan = (tier: PlanTier) => {
     setStoredPlan(tier)
     setPlan(tier)
     setUpgradeOpen(false)
-    toast.success('Plan updated successfully')
+    toast.success('Consultation plan updated')
   }
 
   return (
@@ -167,23 +118,26 @@ export default function PaymentsPage() {
                 <div>
                   <p className="font-mono text-xs text-[#9CA3AF]">Active Plan</p>
                   <h2 className="mt-2 font-serif text-2xl font-bold text-[#1F2937]">{PLAN_LABEL[plan]}</h2>
-                  <p className="mt-1 font-mono text-lg text-[#F59E0B]">
-                    Rs {planAmount.toLocaleString('en-IN')} per month
+                  <p className="mt-2 font-mono text-sm font-semibold uppercase tracking-wide text-[#F59E0B]">
+                    Consult for pricing
                   </p>
-                  <p className="mt-2 font-sans text-sm text-[#6B7280]">Renewing 1 June 2025</p>
+                  <p className="mt-2 max-w-xl font-sans text-sm text-[#6B7280]">
+                    Final service scope is shared after PlotKare reviews your property access, inspection needs,
+                    documents, and selected amenities.
+                  </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setUpgradeOpen(true)}
                   className="rounded-lg bg-[#C0392B] px-5 py-2.5 font-sans text-sm font-semibold text-white hover:opacity-95"
                 >
-                  Upgrade to Premium
+                  Request Consultation
                 </button>
               </div>
             </div>
 
             <div className="rounded-xl border border-[#E5E7EB] bg-white p-8 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
-              <h3 className="font-serif text-xl font-bold text-[#1F2937]">Current Month Billing</h3>
+              <h3 className="font-serif text-xl font-bold text-[#1F2937]">Consultation Package Status</h3>
               <div className="mt-6 space-y-3 border-b border-[#E5E7EB] pb-4">
                 {displayRows.map((row) => (
                   <div
@@ -192,57 +146,40 @@ export default function PaymentsPage() {
                   >
                     <div>
                       <span className="text-[#1F2937]">{row.label}</span>
-                      <span
-                        className={`ml-2 ${row.recurringAmount == null ? 'text-[#9CA3AF]' : 'text-[#6B7280]'}`}
-                      >
-                        {row.detail}
-                      </span>
+                      <span className="ml-2 text-[#6B7280]">{row.detail}</span>
                     </div>
-                    <span className="font-mono text-[#1F2937]">
-                      {row.recurringAmount != null
-                        ? `Rs ${row.recurringAmount.toLocaleString('en-IN')}`
-                        : '—'}
-                    </span>
+                    <span className="font-mono text-[#C0392B]">{row.status}</span>
                   </div>
                 ))}
               </div>
-              <div className="mt-4 flex justify-between font-mono text-sm text-[#6B7280]">
-                <span>Subtotal (recurring)</span>
-                <span>Rs {recurringSubtotal.toLocaleString('en-IN')}</span>
-              </div>
-              <div className="mt-2 flex justify-between font-mono text-sm text-[#6B7280]">
-                <span>GST (18% on recurring)</span>
-                <span>Rs {Math.round(gst).toLocaleString('en-IN')}</span>
-              </div>
-              <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-[#E5E7EB] pt-6">
+              <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
                 <div>
-                  <p className="font-mono text-xs text-[#9CA3AF]">Total Due</p>
+                  <p className="font-mono text-xs text-[#9CA3AF]">Advisor Next Step</p>
                   <p
-                    className="font-mono text-3xl font-bold text-[#F59E0B]"
+                    className="font-mono text-2xl font-bold uppercase tracking-wide text-[#F59E0B]"
                     style={{ fontFamily: 'var(--font-dm-mono), monospace' }}
                   >
-                    Rs {Math.round(totalDue).toLocaleString('en-IN')}
+                    Book Demo
                   </p>
                 </div>
                 <button
                   type="button"
-                  onClick={() => toast.success('Payment gateway would open here')}
+                  onClick={() => toast.success('Advisor consultation request saved')}
                   className="rounded-lg bg-[#C0392B] px-8 py-3 font-sans text-sm font-semibold text-white hover:opacity-95"
                 >
-                  Pay Now
+                  Talk to PlotKare
                 </button>
               </div>
             </div>
 
             <div className="rounded-xl border border-[#E5E7EB] bg-white p-8 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
-              <h3 className="font-serif text-xl font-bold text-[#1F2937]">Payment History</h3>
+              <h3 className="font-serif text-xl font-bold text-[#1F2937]">Consultation Records</h3>
               <div className="mt-6 overflow-x-auto">
                 <table className="w-full border-collapse text-left font-sans text-sm">
                   <thead>
                     <tr className="border-b border-[#E5E7EB] text-[#9CA3AF]">
                       <th className="pb-3 pr-4 font-mono text-xs uppercase">Date</th>
                       <th className="pb-3 pr-4 font-mono text-xs uppercase">Description</th>
-                      <th className="pb-3 pr-4 text-right font-mono text-xs uppercase">Amount</th>
                       <th className="pb-3 text-right font-mono text-xs uppercase">Status</th>
                     </tr>
                   </thead>
@@ -251,9 +188,6 @@ export default function PaymentsPage() {
                       <tr key={i} className="border-b border-[#F3F4F6] text-[#1F2937]">
                         <td className="py-3 pr-4 font-mono text-[#6B7280]">{row.date}</td>
                         <td className="py-3 pr-4">{row.description}</td>
-                        <td className="py-3 pr-4 text-right font-mono">
-                          Rs {row.amount.toLocaleString('en-IN')}
-                        </td>
                         <td className="py-3 text-right font-mono text-[#16A34A]">{row.status}</td>
                       </tr>
                     ))}
@@ -268,15 +202,15 @@ export default function PaymentsPage() {
       <Dialog open={upgradeOpen} onOpenChange={setUpgradeOpen}>
         <DialogContent className="max-h-[90vh] overflow-y-auto border-[#E5E7EB] bg-white sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle className="font-serif text-xl text-[#1F2937]">Choose your plan</DialogTitle>
+            <DialogTitle className="font-serif text-xl text-[#1F2937]">Choose a consultation path</DialogTitle>
           </DialogHeader>
           <div className="space-y-6 pt-2">
             {(['basic', 'standard', 'premium'] as const).map((tier) => (
               <div key={tier} className="rounded-xl border border-[#E5E7EB] bg-[#F9FAFB] p-5">
                 <div className="flex items-center justify-between gap-2">
                   <h4 className="font-serif text-lg font-semibold text-[#1F2937]">{PLAN_LABEL[tier]}</h4>
-                  <span className="font-mono text-[#F59E0B]">
-                    Rs {PLAN_PRICES[tier].toLocaleString('en-IN')}/mo
+                  <span className="font-mono text-xs font-semibold uppercase tracking-wide text-[#F59E0B]">
+                    Consult for pricing
                   </span>
                 </div>
                 <ul className="mt-3 list-inside list-disc space-y-1 font-sans text-xs text-[#6B7280]">
@@ -289,7 +223,7 @@ export default function PaymentsPage() {
                   onClick={() => selectPlan(tier)}
                   className="mt-4 w-full rounded-lg bg-[#C0392B] py-2.5 font-sans text-sm font-semibold text-white hover:opacity-95"
                 >
-                  Select Plan
+                  Select Consultation Path
                 </button>
               </div>
             ))}

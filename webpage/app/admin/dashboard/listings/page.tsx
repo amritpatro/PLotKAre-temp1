@@ -17,7 +17,6 @@ import {
   type PublicPlotListing,
 } from '@/lib/public-listings'
 import {
-  PRICE_TILES,
   SIZE_TILES,
   VIZAG_LOCATIONS,
   type VizagLocation,
@@ -45,7 +44,6 @@ export default function AdminListingsPage() {
   const [aptSizeLabel, setAptSizeLabel] = useState('')
   const [aptBhk, setAptBhk] = useState('')
   const [aptFloor, setAptFloor] = useState('')
-  const [priceLabel, setPriceLabel] = useState<(typeof PRICE_TILES)[number]['label'] | null>(null)
   const [facing, setFacing] = useState<Facing>('East')
   const [corner, setCorner] = useState(false)
 
@@ -58,7 +56,6 @@ export default function AdminListingsPage() {
     setAptSizeLabel('')
     setAptBhk('')
     setAptFloor('')
-    setPriceLabel(null)
     setFacing('East')
     setCorner(false)
   }
@@ -86,8 +83,7 @@ export default function AdminListingsPage() {
 
   const addListing = (e: React.FormEvent) => {
     e.preventDefault()
-    const lakhs = PRICE_TILES.find((p) => p.label === priceLabel)?.lakhs
-    if (!plotNumber.trim() || lakhs == null) return
+    if (!plotNumber.trim()) return
 
     if (listingKind === 'plot') {
       const sq = sizeTile ? parseSq(sizeTile, customSq) : null
@@ -101,8 +97,8 @@ export default function AdminListingsPage() {
         facing,
         cornerPlot: corner,
         premium: false,
-        priceLakhs: lakhs,
-        priceDisplay: lakhs >= 100 ? `${lakhs % 100 === 0 ? lakhs / 100 : (lakhs / 100).toFixed(2)} Cr` : `${lakhs} Lakhs`,
+        priceLakhs: 0,
+        priceDisplay: 'Consult after verification',
         imageUrl: getLocalListingImage({ propertyKind: 'plot' }),
         status: 'Active',
         inquiriesCount: 0,
@@ -122,8 +118,8 @@ export default function AdminListingsPage() {
         facing,
         cornerPlot: false,
         premium: false,
-        priceLakhs: lakhs,
-        priceDisplay: lakhs >= 100 ? `${lakhs % 100 === 0 ? lakhs / 100 : (lakhs / 100).toFixed(2)} Cr` : `${lakhs} Lakhs`,
+        priceLakhs: 0,
+        priceDisplay: 'Consult after verification',
         imageUrl: getLocalListingImage({ propertyKind: 'apartment' }),
         status: 'Active',
         inquiriesCount: 0,
@@ -148,17 +144,12 @@ export default function AdminListingsPage() {
 
   const saveEdit = () => {
     if (!editRow) return
-    const lakhs = PRICE_TILES.find((p) => p.label === priceLabel)?.lakhs ?? editRow.priceLakhs
     persist(
       rows.map((r) =>
         r.id === editRow.id
           ? {
               ...r,
-              priceLakhs: lakhs,
-              priceDisplay:
-                lakhs >= 100
-                  ? `${lakhs % 100 === 0 ? lakhs / 100 : Number((lakhs / 100).toFixed(2))} Cr`
-                  : `${lakhs} Lakhs`,
+              priceDisplay: 'Consult after verification',
             }
           : r,
       ),
@@ -193,7 +184,7 @@ export default function AdminListingsPage() {
               <th className="px-3 py-3">Ref #</th>
               <th className="px-3 py-3">Location</th>
               <th className="px-3 py-3">Size</th>
-              <th className="px-3 py-3">Price</th>
+              <th className="px-3 py-3">Consultation</th>
               <th className="px-3 py-3">Status</th>
               <th className="px-3 py-3">Inquiries</th>
               <th className="px-3 py-3">Actions</th>
@@ -208,7 +199,7 @@ export default function AdminListingsPage() {
                 <td className="px-3 py-3 font-mono text-[#C0392B]">{r.plotNumber}</td>
                 <td className="px-3 py-3 text-[#6B7280]">{r.location}</td>
                 <td className="px-3 py-3">{r.sizeLabel}</td>
-                <td className="px-3 py-3 font-mono text-[#F59E0B]">₹ {r.priceDisplay}</td>
+                <td className="px-3 py-3 font-mono text-[#F59E0B]">Consult required</td>
                 <td className="px-3 py-3">{r.status}</td>
                 <td className="px-3 py-3">{r.inquiriesCount}</td>
                 <td className="px-3 py-3 space-x-1">
@@ -216,10 +207,6 @@ export default function AdminListingsPage() {
                     type="button"
                     onClick={() => {
                       setEditRow(r)
-                      setPriceLabel(
-                        PRICE_TILES.find((t) => t.lakhs === r.priceLakhs)?.label ??
-                          PRICE_TILES[0].label,
-                      )
                     }}
                     className="rounded border border-[#C0392B] px-2 py-1 text-xs text-[#C0392B]"
                   >
@@ -369,24 +356,13 @@ export default function AdminListingsPage() {
                 </div>
               </>
             )}
-            <div>
-              <label className="font-mono text-xs text-[#6B7280]">Price</label>
-              <div className="mt-2 grid max-h-36 grid-cols-3 gap-1 overflow-y-auto sm:grid-cols-4">
-                {PRICE_TILES.map(({ label }) => (
-                  <button
-                    key={label}
-                    type="button"
-                    onClick={() => setPriceLabel(label)}
-                    className={`rounded border px-1 py-2 font-mono text-[10px] ${
-                      priceLabel === label
-                        ? 'border-[#C0392B] bg-[#FFF1F2] text-[#C0392B]'
-                        : 'border-[#D1D5DB]'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
+            <div className="rounded-lg border border-[#FDE68A] bg-[#FFFBEB] p-3">
+              <p className="font-mono text-xs font-semibold uppercase tracking-wide text-[#B45309]">
+                Pricing policy
+              </p>
+              <p className="mt-1 font-sans text-sm text-[#6B7280]">
+                Listings show consultation-first pricing only. Advisors share scope after verification.
+              </p>
             </div>
             <div>
               <span className="font-mono text-xs text-[#6B7280]">Facing</span>
@@ -431,24 +407,12 @@ export default function AdminListingsPage() {
       <Dialog open={!!editRow} onOpenChange={(o) => !o && setEditRow(null)}>
         <DialogContent className="border-[#E5E7EB] bg-white sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="font-serif text-[#1F2937]">Edit price</DialogTitle>
+            <DialogTitle className="font-serif text-[#1F2937]">Edit listing</DialogTitle>
           </DialogHeader>
-          <div className="grid max-h-48 grid-cols-3 gap-2 overflow-y-auto pt-2">
-            {PRICE_TILES.map(({ label }) => (
-              <button
-                key={label}
-                type="button"
-                onClick={() => setPriceLabel(label)}
-                className={`rounded-lg border px-2 py-2 font-mono text-[10px] ${
-                  priceLabel === label
-                    ? 'border-[#C0392B] bg-[#FFF1F2] text-[#C0392B]'
-                    : 'border-[#D1D5DB]'
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+          <p className="pt-2 font-sans text-sm leading-relaxed text-[#6B7280]">
+            Public marketplace rows now use consultation-first pricing. Keep the listing active and route all pricing
+            questions to a PlotKare advisor.
+          </p>
           <button
             type="button"
             onClick={saveEdit}

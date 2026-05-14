@@ -38,30 +38,5 @@ export const SIZE_TILES = [
   'Custom',
 ] as const
 
-export const PRICE_TILES = [
-  { label: '10 Lakhs', lakhs: 10 },
-  { label: '15 Lakhs', lakhs: 15 },
-  { label: '20 Lakhs', lakhs: 20 },
-  { label: '25 Lakhs', lakhs: 25 },
-  { label: '30 Lakhs', lakhs: 30 },
-  { label: '35 Lakhs', lakhs: 35 },
-  { label: '40 Lakhs', lakhs: 40 },
-  { label: '45 Lakhs', lakhs: 45 },
-  { label: '50 Lakhs', lakhs: 50 },
-  { label: '55 Lakhs', lakhs: 55 },
-  { label: '60 Lakhs', lakhs: 60 },
-  { label: '65 Lakhs', lakhs: 65 },
-  { label: '70 Lakhs', lakhs: 70 },
-  { label: '75 Lakhs', lakhs: 75 },
-  { label: '80 Lakhs', lakhs: 80 },
-  { label: '90 Lakhs', lakhs: 90 },
-  { label: '1 Cr', lakhs: 100 },
-  { label: '1.25 Cr', lakhs: 125 },
-  { label: '1.35 Cr', lakhs: 135 },
-  { label: '1.5 Cr', lakhs: 150 },
-  { label: '2 Cr', lakhs: 200 },
-] as const
-
 export type VizagLocation = (typeof VIZAG_LOCATIONS)[number]
 export type SizeTile = (typeof SIZE_TILES)[number]
-export type PriceTile = (typeof PRICE_TILES)[number]

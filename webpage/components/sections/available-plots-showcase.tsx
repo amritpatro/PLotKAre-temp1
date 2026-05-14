@@ -166,8 +166,8 @@ function PlotCard({
             </span>
           )}
         </div>
-        <p className="font-mono text-2xl font-bold md:text-3xl" style={{ color: GOLD }}>
-          ₹ {plot.priceDisplay}
+        <p className="font-mono text-xl font-bold uppercase tracking-wide md:text-2xl" style={{ color: GOLD }}>
+          Consult for pricing
         </p>
         <div className="flex flex-wrap gap-3 pt-1">
           <button
@@ -328,8 +328,8 @@ export function AvailablePlotsShowcaseSection() {
                   {detailPlot.cornerPlot ? 'Yes' : 'No'}
                 </p>
                 )}
-                <p className="font-mono text-xl font-semibold" style={{ color: GOLD }}>
-                  Asking ₹ {detailPlot.priceDisplay}
+                <p className="font-mono text-lg font-semibold uppercase tracking-wide" style={{ color: GOLD }}>
+                  Pricing shared after advisor consultation
                 </p>
               </div>
               {detailPlot.propertyKind === 'plot' && (

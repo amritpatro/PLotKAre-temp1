@@ -263,7 +263,7 @@ export default function SettingsPage() {
                   <div>
                     <p className="font-mono text-xs text-[#9CA3AF]">Current plan</p>
                     <p className="mt-1 text-lg font-semibold text-[#1F2937]">Standard Plan</p>
-                    <p className="mt-1 font-mono text-[#F59E0B]">₹1,999 per month — renewing 1 June 2025</p>
+                    <p className="mt-1 font-mono text-[#F59E0B]">Consult for pricing after advisor review</p>
                   </div>
                   <button
                     type="button"
@@ -272,16 +272,16 @@ export default function SettingsPage() {
                     }}
                     className="rounded-lg bg-[#C0392B] px-6 py-3 font-sans text-sm font-semibold text-white hover:opacity-95"
                   >
-                    Upgrade to Premium
+                    Request Consultation
                   </button>
                   <div className="border-t border-[#E5E7EB] pt-6">
-                    <p className="font-mono text-xs text-[#9CA3AF]">Payment method</p>
-                    <p className="mt-2 text-[#1F2937]">Visa ending 4242</p>
+                    <p className="font-mono text-xs text-[#9CA3AF]">Service approval</p>
+                    <p className="mt-2 text-[#1F2937]">Advisor confirmation required before activation</p>
                     <button
                       type="button"
                       className="mt-3 rounded-lg border border-[#E5E7EB] px-4 py-2 text-sm text-[#1F2937] hover:bg-[#F9FAFB]"
                     >
-                      Update Card
+                      Talk to PlotKare
                     </button>
                   </div>
                   <button
@@ -289,7 +289,7 @@ export default function SettingsPage() {
                     onClick={() => toast.success('Preparing receipts download…')}
                     className="rounded-lg border border-[#E5E7EB] px-4 py-2 text-sm text-[#1F2937] hover:bg-[#F9FAFB]"
                   >
-                    Download all receipts
+                    Download consultation records
                   </button>
                 </div>
               </TabsContent>

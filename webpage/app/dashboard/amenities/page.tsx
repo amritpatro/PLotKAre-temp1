@@ -49,14 +49,6 @@ export default function AmenitiesPage() {
       .filter(Boolean) as AmenityCatalogItem[]
   }, [activeNames])
 
-  const monthlyTotal = useMemo(() => {
-    let sum = 0
-    for (const item of activeItems) {
-      if (item.kind === 'monthly') sum += item.amount
-    }
-    return sum
-  }, [activeItems])
-
   const addAmenity = (item: AmenityCatalogItem) => {
     if (activeSet.has(item.name)) return
     saveActiveAmenityNames([...activeNames, item.name])
@@ -111,10 +103,8 @@ export default function AmenitiesPage() {
                           <span className="mt-1 inline-block rounded-full bg-[#F3F4F6] px-2 py-0.5 font-mono text-[10px] text-[#6B7280]">
                             {item.category}
                           </span>
-                          <p className="mt-2 font-mono text-sm text-[#F59E0B]">
-                            {item.kind === 'monthly'
-                              ? `₹${item.amount.toLocaleString('en-IN')}/mo`
-                              : `One-time ₹${item.amount.toLocaleString('en-IN')}`}
+                          <p className="mt-2 font-mono text-sm font-semibold uppercase tracking-wide text-[#F59E0B]">
+                            Consult for service scope
                           </p>
                         </div>
                       </div>
@@ -124,19 +114,19 @@ export default function AmenitiesPage() {
               </div>
 
               <div className="mt-8 border-t border-[#E5E7EB] pt-6">
-                <p className="font-mono text-sm text-[#6B7280]">Total Est. Monthly Income</p>
+                <p className="font-mono text-sm text-[#6B7280]">Amenity Consultation Status</p>
                 <p
-                  className="mt-1 font-mono text-2xl font-bold text-[#F59E0B]"
+                  className="mt-1 font-mono text-2xl font-bold uppercase tracking-wide text-[#F59E0B]"
                   style={{ fontFamily: 'var(--font-dm-mono), monospace' }}
                 >
-                  Rs {monthlyTotal.toLocaleString('en-IN')} per month
+                  Advisor scope required
                 </p>
                 <button
                   type="button"
                   onClick={() => router.push('/dashboard/payments')}
                   className="mt-4 w-full rounded-lg bg-[#C0392B] py-3 font-sans text-sm font-semibold text-white transition-opacity hover:opacity-95"
                 >
-                  Proceed to Payment
+                  Request Consultation
                 </button>
               </div>
             </div>
@@ -170,10 +160,8 @@ export default function AmenitiesPage() {
                         <h3 className="font-serif text-lg font-bold leading-tight text-[#1F2937]">
                           {item.name}
                         </h3>
-                        <p className="mt-2 font-mono text-xs text-[#F59E0B]">
-                          {item.kind === 'monthly'
-                            ? `Est. ₹${item.amount.toLocaleString('en-IN')}/mo`
-                            : `One-time ₹${item.amount.toLocaleString('en-IN')}`}
+                        <p className="mt-2 font-mono text-xs font-semibold uppercase tracking-wide text-[#F59E0B]">
+                          Consult for pricing
                         </p>
                         <div className="mt-auto pt-4">
                           <button
@@ -194,7 +182,7 @@ export default function AmenitiesPage() {
                             ) : (
                               <>
                                 <ShoppingCart className="h-4 w-4" />
-                                Add to Plot
+                                Request Scope
                               </>
                             )}
                           </button>

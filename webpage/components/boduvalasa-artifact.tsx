@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic'
 import { Canvas, useThree } from '@react-three/fiber'
-import { OrbitControls } from '@react-three/drei'
+import { OrbitControls, Text } from '@react-three/drei'
 import * as THREE from 'three'
 import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { BODUVALASA_LAYOUT } from '@/lib/boduvalasa-layout'
@@ -15,6 +15,9 @@ const ROAD = '#9aa3ad'
 const PAPER = '#fffaf1'
 const LAND = '#ded3b8'
 const GREEN = '#355f49'
+const GRASS = '#6f8f4e'
+const SOIL = '#6b5737'
+const LAYOUT_NORTH_DEGREES = -8
 
 function normalizedPoint(x: number, y: number) {
   const w = BODUVALASA_LAYOUT.viewBox.width
@@ -72,6 +75,7 @@ type Boduvalasa3DCanvasProps = {
 
 function BoduvalasaScene({ selectedPlot, onPlotSelect }: Boduvalasa3DCanvasProps) {
   const plotMarks = useMemo(() => BODUVALASA_LAYOUT.plotMarks, [])
+  const selectedProfile = selectedPlot ? getPlotProfile(selectedPlot) : null
 
   return (
     <>
@@ -98,9 +102,16 @@ function BoduvalasaScene({ selectedPlot, onPlotSelect }: Boduvalasa3DCanvasProps
       {plotMarks.map((mark) => {
         const p = normalizedPoint(mark.x, mark.y)
         const selected = mark.n === selectedPlot
-        const height = Math.min(0.58, 0.13 + ((mark.extent ?? 100) / 300) * 0.3) + (selected ? 0.14 : 0)
+        const extentRatio = Math.min(1.2, Math.max(0.55, (mark.extent ?? 120) / 220))
+        const parcelW = (selected ? 0.4 : 0.26) * extentRatio
+        const parcelD = (selected ? 0.3 : 0.2) * Math.max(0.72, Math.min(1.05, extentRatio))
+        const height = selected ? 0.28 : 0.1
         return (
           <group key={mark.n} position={[p.x, height / 2 + 0.08, p.z]}>
+            <mesh position={[0, -height / 2 - 0.025, 0]} receiveShadow>
+              <boxGeometry args={[parcelW * 1.06, 0.05, parcelD * 1.08]} />
+              <meshStandardMaterial color={SOIL} roughness={0.88} metalness={0.02} />
+            </mesh>
             <mesh
               castShadow
               receiveShadow
@@ -109,13 +120,74 @@ function BoduvalasaScene({ selectedPlot, onPlotSelect }: Boduvalasa3DCanvasProps
                 onPlotSelect?.(mark.n)
               }}
             >
-              <boxGeometry args={[selected ? 0.34 : 0.22, height, selected ? 0.24 : 0.16]} />
+              <boxGeometry args={[parcelW, height, parcelD]} />
               <meshStandardMaterial
-                color={selected ? CRIMSON : mark.n % 18 === 0 ? CRIMSON : '#f4ead4'}
-                roughness={0.72}
-                metalness={selected ? 0.14 : 0.04}
+                color={selected ? CRIMSON : GRASS}
+                roughness={selected ? 0.58 : 0.92}
+                metalness={selected ? 0.12 : 0.02}
               />
             </mesh>
+            <mesh position={[0, height / 2 + 0.004, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+              <planeGeometry args={[parcelW * 0.86, parcelD * 0.78]} />
+              <meshStandardMaterial
+                color={selected ? '#9e2a4f' : '#89b86a'}
+                roughness={0.96}
+                metalness={0}
+              />
+            </mesh>
+            {!selected ? (
+              <mesh position={[0, height / 2 + 0.008, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                <planeGeometry args={[parcelW * 0.6, 0.018]} />
+                <meshStandardMaterial color="#d5c28e" roughness={0.9} />
+              </mesh>
+            ) : null}
+            {selected && selectedProfile ? (
+              <group position={[0, height / 2 + 0.025, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                <Text
+                  fontSize={0.058}
+                  color="#ffffff"
+                  anchorX="center"
+                  anchorY="middle"
+                  maxWidth={0.72}
+                  textAlign="center"
+                >
+                  PLOTKARE VERIFIED
+                </Text>
+                <Text
+                  position={[0, -0.07, 0.002]}
+                  fontSize={0.046}
+                  color="#fff6d8"
+                  anchorX="center"
+                  anchorY="middle"
+                  maxWidth={0.68}
+                  textAlign="center"
+                >
+                  {`Plot ${selectedProfile.plotNumber} · ${selectedProfile.ownerName}`}
+                </Text>
+                <Text
+                  position={[0, -0.13, 0.003]}
+                  fontSize={0.032}
+                  color="#ffffff"
+                  anchorX="center"
+                  anchorY="middle"
+                  maxWidth={0.68}
+                  textAlign="center"
+                >
+                  {`${selectedProfile.facing} · ${selectedProfile.roadAccess}`}
+                </Text>
+                <Text
+                  position={[0, -0.18, 0.004]}
+                  fontSize={0.029}
+                  color="#fff6d8"
+                  anchorX="center"
+                  anchorY="middle"
+                  maxWidth={0.68}
+                  textAlign="center"
+                >
+                  {`${selectedProfile.extent} · ${selectedProfile.status}`}
+                </Text>
+              </group>
+            ) : null}
           </group>
         )
       })}
@@ -149,7 +221,9 @@ function BoduvalasaScene({ selectedPlot, onPlotSelect }: Boduvalasa3DCanvasProps
 }
 
 function Boduvalasa3DCanvasImpl({ className = '', selectedPlot, onPlotSelect }: Boduvalasa3DCanvasProps) {
-  const selectedProfile = selectedPlot ? getPlotProfile(selectedPlot) : null
+  const [internalSelected, setInternalSelected] = useState(selectedPlot ?? 54)
+  const activePlot = selectedPlot ?? internalSelected
+  const selectedProfile = activePlot ? getPlotProfile(activePlot) : null
   const [zoom, setZoom] = useState(54)
   const cameraRef = useRef<THREE.OrthographicCamera | null>(null)
 
@@ -178,7 +252,13 @@ function Boduvalasa3DCanvasImpl({ className = '', selectedPlot, onPlotSelect }: 
         }}
         style={{ height: '100%' }}
       >
-        <BoduvalasaScene selectedPlot={selectedPlot} onPlotSelect={onPlotSelect} />
+        <BoduvalasaScene
+          selectedPlot={activePlot}
+          onPlotSelect={(plotNumber) => {
+            setInternalSelected(plotNumber)
+            onPlotSelect?.(plotNumber)
+          }}
+        />
       </Canvas>
       <div className="pointer-events-none absolute left-4 top-4 rounded-sm border border-white/10 bg-black/40 px-3 py-2 backdrop-blur">
         <p className="font-mono text-[10px] uppercase tracking-wide text-white/55">Real layout artifact</p>
@@ -189,9 +269,17 @@ function Boduvalasa3DCanvasImpl({ className = '', selectedPlot, onPlotSelect }: 
         <div className="absolute bottom-2 left-1/2 -translate-x-1/2 font-mono text-[10px] text-white/55">S</div>
         <div className="absolute left-2 top-1/2 -translate-y-1/2 font-mono text-[10px] text-white/55">W</div>
         <div className="absolute right-2 top-1/2 -translate-y-1/2 font-mono text-[10px] text-white/55">E</div>
-        <div className="absolute left-1/2 top-1/2 h-9 w-0.5 -translate-x-1/2 -translate-y-1/2 bg-white/35" />
-        <div className="absolute left-1/2 top-1/2 h-0.5 w-9 -translate-x-1/2 -translate-y-1/2 bg-white/25" />
-        <div className="absolute left-1/2 top-[18px] h-5 w-3 -translate-x-1/2 bg-primary [clip-path:polygon(50%_0,100%_100%,50%_78%,0_100%)]" />
+        <div
+          className="absolute left-1/2 top-1/2 h-11 w-11 -translate-x-1/2 -translate-y-1/2"
+          style={{ transform: `translate(-50%, -50%) rotate(${LAYOUT_NORTH_DEGREES}deg)` }}
+        >
+          <div className="absolute left-1/2 top-1/2 h-9 w-0.5 -translate-x-1/2 -translate-y-1/2 bg-white/35" />
+          <div className="absolute left-1/2 top-1/2 h-0.5 w-9 -translate-x-1/2 -translate-y-1/2 bg-white/25" />
+          <div className="absolute left-1/2 top-0 h-5 w-3 -translate-x-1/2 bg-primary [clip-path:polygon(50%_0,100%_100%,50%_78%,0_100%)]" />
+        </div>
+        <div className="absolute bottom-[-14px] left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-black/50 px-2 py-0.5 font-mono text-[8px] uppercase tracking-wide text-white/50">
+          Layout north
+        </div>
       </div>
       <div className="absolute bottom-4 right-4 z-20 flex items-center overflow-hidden rounded-sm border border-white/10 bg-black/45 text-white shadow-xl backdrop-blur">
         <button
@@ -218,10 +306,16 @@ function Boduvalasa3DCanvasImpl({ className = '', selectedPlot, onPlotSelect }: 
       </div>
       {selectedProfile ? (
         <div className="pointer-events-none absolute bottom-4 left-4 max-w-[260px] rounded-sm border border-white/10 bg-black/45 p-4 text-white shadow-xl backdrop-blur">
+          <p className="mb-2 inline-flex rounded-full border border-[#C9A962]/40 bg-[#8B1538]/80 px-2 py-1 font-mono text-[9px] font-bold uppercase tracking-wide text-white">
+            PLOTKARE VERIFIED
+          </p>
           <p className="font-mono text-[10px] uppercase tracking-wide text-white/50">Selected plot</p>
           <p className="mt-1 font-serif text-2xl font-bold leading-none">Plot {selectedProfile.plotNumber}</p>
           <p className="mt-2 font-sans text-xs leading-relaxed text-white/70">
             {selectedProfile.ownerName} · {selectedProfile.facing} · {selectedProfile.roadAccess}
+          </p>
+          <p className="mt-1 font-sans text-xs leading-relaxed text-white/60">
+            {selectedProfile.extent} · {selectedProfile.status}
           </p>
         </div>
       ) : null}
@@ -344,6 +438,7 @@ export function BoduvalasaPlanSvg({
 }
 
 export function BoduvalasaArtifactPanel({ className = '' }: { className?: string }) {
+  const [selectedPlot, setSelectedPlot] = useState(54)
   const largestPlots = [...BODUVALASA_LAYOUT.plotExtents]
     .sort((a, b) => b.extentSqYards - a.extentSqYards)
     .slice(0, 4)
@@ -352,7 +447,7 @@ export function BoduvalasaArtifactPanel({ className = '' }: { className?: string
     <div className={`overflow-hidden rounded-lg border border-white/10 bg-[#131313] text-white shadow-2xl ${className}`}>
       <div className="grid gap-0 lg:grid-cols-[minmax(0,1.15fr)_minmax(300px,0.85fr)]">
         <div className="min-h-[460px]">
-          <Boduvalasa3DCanvas />
+          <Boduvalasa3DCanvas selectedPlot={selectedPlot} onPlotSelect={setSelectedPlot} />
         </div>
         <div className="border-t border-white/10 p-6 lg:border-l lg:border-t-0">
           <p className="font-mono text-xs uppercase tracking-wide text-white/45">Source document</p>
@@ -389,7 +484,7 @@ export function BoduvalasaArtifactPanel({ className = '' }: { className?: string
         </div>
       </div>
       <div className="border-t border-white/10 bg-white/[0.03] p-4">
-        <BoduvalasaPlanSvg className="max-h-[520px]" />
+        <BoduvalasaPlanSvg className="max-h-[520px]" selectedPlot={selectedPlot} onPlotSelect={setSelectedPlot} />
       </div>
     </div>
   )

@@ -20,7 +20,7 @@ import {
 } from '@/lib/public-listings'
 import { withBasePath } from '@/lib/site-config'
 
-const FILTERS: ListingFilter[] = ['All Plots', 'Under 50 Lakhs', 'Above 50 Lakhs', 'Corner Plots']
+const FILTERS: ListingFilter[] = ['All Plots', 'Verified Plots', 'Site Visit Ready', 'Corner Plots']
 
 function InquiryBody({
   plot,
@@ -178,7 +178,9 @@ export default function ListingsPage() {
                         Premium
                       </span>
                     )}
-                    <p className="font-mono text-xl font-bold text-[#F59E0B]">₹ {plot.priceDisplay}</p>
+                    <p className="font-mono text-sm font-bold uppercase tracking-wide text-[#F59E0B]">
+                      Consult for pricing
+                    </p>
                     <div className="flex flex-col gap-2 pt-1">
                       <button
                         type="button"
@@ -208,7 +210,7 @@ export default function ListingsPage() {
 
             <div className="mt-12 rounded-xl border border-[#E5E7EB] border-l-[4px] border-l-[#C0392B] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
               <p className="font-sans text-sm text-[#6B7280]">
-                Want your plot listed? Contact us during beta — no listing fees.
+                Want your plot listed? Contact us during beta for a guided listing consultation.
               </p>
               <button
                 type="button"

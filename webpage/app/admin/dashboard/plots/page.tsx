@@ -7,40 +7,29 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { PRICE_TILES } from '@/lib/vizag-form-constants'
 import {
   loadAdminRegistryPlots,
   saveAdminRegistryPlots,
   type AdminRegistryPlot,
 } from '@/lib/admin-demo-store'
 
-function lakhsToDisplay(lakhs: number): string {
-  if (lakhs >= 100) return `${(lakhs / 100).toFixed(2)} Cr`
-  const r = Math.round(lakhs * 100) / 100
-  return `${r % 1 === 0 ? r.toFixed(0) : r} Lakhs`
-}
-
 export default function AdminPlotsPage() {
   const [rows, setRows] = useState<AdminRegistryPlot[]>([])
   const [view, setView] = useState<AdminRegistryPlot | null>(null)
   const [edit, setEdit] = useState<AdminRegistryPlot | null>(null)
-  const [valueLabel, setValueLabel] = useState<(typeof PRICE_TILES)[number]['label'] | null>(null)
   const [lastDate, setLastDate] = useState('')
 
   useEffect(() => setRows(loadAdminRegistryPlots()), [])
 
   const openEdit = (r: AdminRegistryPlot) => {
     setEdit(r)
-    const match = PRICE_TILES.find((t) => t.lakhs === r.currentValueLakhs)
-    setValueLabel(match?.label ?? PRICE_TILES.find((t) => t.lakhs >= r.currentValueLakhs)?.label ?? '70 Lakhs')
     setLastDate(
       new Date().toISOString().slice(0, 10),
     )
   }
 
   const saveEdit = () => {
-    if (!edit || !valueLabel) return
-    const lakhs = PRICE_TILES.find((t) => t.label === valueLabel)?.lakhs ?? edit.currentValueLakhs
+    if (!edit) return
     const lastInspection = new Date(lastDate).toLocaleDateString('en-GB', {
       day: '2-digit',
       month: 'short',
@@ -50,8 +39,6 @@ export default function AdminPlotsPage() {
       x.id === edit.id
         ? {
             ...x,
-            currentValueLakhs: lakhs,
-            currentValue: lakhsToDisplay(lakhs),
             lastInspection,
           }
         : x,
@@ -74,8 +61,8 @@ export default function AdminPlotsPage() {
               <th className="px-3 py-3">Owner</th>
               <th className="px-3 py-3">Location</th>
               <th className="px-3 py-3">Size</th>
-              <th className="px-3 py-3">Purchase</th>
-              <th className="px-3 py-3">Current</th>
+              <th className="px-3 py-3">Review</th>
+              <th className="px-3 py-3">Consultation</th>
               <th className="px-3 py-3">Inspection</th>
               <th className="px-3 py-3">Status</th>
               <th className="px-3 py-3">Actions</th>
@@ -88,8 +75,8 @@ export default function AdminPlotsPage() {
                 <td className="px-3 py-3">{r.ownerName}</td>
                 <td className="px-3 py-3 text-[#6B7280]">{r.location}</td>
                 <td className="px-3 py-3 text-[#6B7280]">{r.size}</td>
-                <td className="px-3 py-3">{r.purchasePrice}</td>
-                <td className="px-3 py-3 font-mono text-[#F59E0B]">{r.currentValue}</td>
+                <td className="px-3 py-3">Advisor review ready</td>
+                <td className="px-3 py-3 font-mono text-[#F59E0B]">Consult for valuation</td>
                 <td className="px-3 py-3 text-[#6B7280]">{r.lastInspection}</td>
                 <td className="px-3 py-3 text-[#16A34A]">{r.status}</td>
                 <td className="px-3 py-3 space-x-2">
@@ -134,10 +121,9 @@ export default function AdminPlotsPage() {
                 <dd>{view.location}</dd>
               </div>
               <div>
-                <dt className="text-[#9CA3AF]">Values</dt>
+                <dt className="text-[#9CA3AF]">Advisory status</dt>
                 <dd>
-                  Purchase {view.purchasePrice} → Current{' '}
-                  <span className="font-mono text-[#F59E0B]">{view.currentValue}</span>
+                  <span className="font-mono text-[#F59E0B]">Consult for valuation</span>
                 </dd>
               </div>
             </dl>
@@ -153,25 +139,10 @@ export default function AdminPlotsPage() {
           {edit && (
             <div className="space-y-4 pt-2">
               <p className="font-mono text-sm text-[#6B7280]">{edit.plotNumber}</p>
-              <div>
-                <label className="font-mono text-xs text-[#6B7280]">Current value</label>
-                <div className="mt-2 grid max-h-48 grid-cols-3 gap-2 overflow-y-auto sm:grid-cols-4">
-                  {PRICE_TILES.map(({ label }) => (
-                    <button
-                      key={label}
-                      type="button"
-                      onClick={() => setValueLabel(label)}
-                      className={`rounded-lg border px-2 py-2 text-center font-mono text-[10px] sm:text-xs ${
-                        valueLabel === label
-                          ? 'border-[#C0392B] bg-[#FFF1F2] text-[#C0392B]'
-                          : 'border-[#D1D5DB] bg-white text-[#1F2937]'
-                      }`}
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <p className="rounded-lg border border-[#FDE68A] bg-[#FFFBEB] p-3 font-sans text-sm text-[#6B7280]">
+                Fixed valuation figures are hidden from admin screens. Use a PlotKare advisor consultation before
+                sharing any valuation guidance.
+              </p>
               <div>
                 <label className="font-mono text-xs text-[#6B7280]">Last inspection date</label>
                 <input

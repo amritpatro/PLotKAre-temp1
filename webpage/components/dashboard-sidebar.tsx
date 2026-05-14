@@ -16,6 +16,7 @@ import {
   LogOut,
   Building2,
 } from 'lucide-react'
+import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
 
 const navItems = [
   { href: '/dashboard', label: 'My Plots', icon: Map },
@@ -33,9 +34,11 @@ export function DashboardSidebar() {
   const pathname = usePathname()
   const router = useRouter()
 
-  const handleLogout = () => {
-    localStorage.removeItem('plotkare_auth')
+  const handleLogout = async () => {
+    const supabase = createSupabaseBrowserClient()
+    await supabase.auth.signOut()
     router.replace('/')
+    router.refresh()
   }
 
   return (
@@ -76,7 +79,7 @@ export function DashboardSidebar() {
 
         <div className="border-t border-[#E5E7EB] p-4">
           <button
-            onClick={handleLogout}
+            onClick={() => void handleLogout()}
             className="flex w-full items-center gap-3 rounded-lg px-4 py-3 font-sans text-sm font-medium text-[#C0392B] transition-colors hover:bg-[#FFF1F2]"
           >
             <LogOut className="h-5 w-5" />

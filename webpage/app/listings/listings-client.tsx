@@ -15,8 +15,8 @@ import { withBasePath } from '@/lib/site-config'
 const FILTERS: ListingFilter[] = [
   'All Plots',
   'Apartments',
-  'Under 50 Lakhs',
-  'Above 50 Lakhs',
+  'Verified Plots',
+  'Site Visit Ready',
   'Corner Plots',
 ]
 
@@ -42,7 +42,7 @@ function ListingCard({ plot }: { plot: PublicPlotListing }) {
           {' · '}
           {plot.facing} facing
         </p>
-        <p className="font-mono text-lg font-bold text-accent">₹ {plot.priceDisplay}</p>
+        <p className="font-mono text-sm font-bold uppercase tracking-wide text-accent">Consult for pricing</p>
       </div>
     </article>
   )
@@ -77,8 +77,8 @@ export default function ListingsPageClient() {
           Visakhapatnam Open Plots &amp; Apartments — Demo Listings
         </h1>
         <p className="mt-3 max-w-2xl font-sans text-muted-foreground">
-          Filter by price band, corner plots, or apartments. Data is illustrative — always verify title and layout
-          approvals on site before paying token.
+          Filter by verification status, site-visit readiness, corner plots, or apartments. Data is illustrative —
+          always verify title and layout approvals with an advisor before making any commitment.
         </p>
 
         <div className="mt-8 flex flex-wrap gap-2">

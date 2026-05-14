@@ -5,9 +5,13 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { LogoMark } from '@/components/logo'
 import { Eye, EyeOff, Check } from 'lucide-react'
+import { createSupabaseBrowserClient } from '@/lib/supabase/browser'
+import { getSiteUrl } from '@/lib/supabase/env'
+import { signupSchema } from '@/lib/validation/auth'
 
 export default function SignupPage() {
   const router = useRouter()
+  const supabase = createSupabaseBrowserClient()
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -21,12 +25,14 @@ export default function SignupPage() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    // Check if already logged in
-    const auth = typeof window !== 'undefined' ? localStorage.getItem('plotkare_auth') : null
-    if (auth === 'true') {
-      router.replace('/dashboard')
+    let mounted = true
+    supabase.auth.getUser().then(({ data }) => {
+      if (mounted && data.user) router.replace('/dashboard')
+    })
+    return () => {
+      mounted = false
     }
-  }, [router])
+  }, [router, supabase])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -36,17 +42,34 @@ export default function SignupPage() {
     }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
 
-    // Show success message for any values
-    setSubmitted(true)
+    const parsed = signupSchema.safeParse(formData)
+    if (!parsed.success) {
+      setError(parsed.error.issues[0]?.message ?? 'Please complete all fields.')
+      return
+    }
 
-    // Redirect to login after 2 seconds
-    setTimeout(() => {
-      router.push('/login')
-    }, 2000)
+    const { error: signUpError } = await supabase.auth.signUp({
+      email: parsed.data.email,
+      password: parsed.data.password,
+      options: {
+        emailRedirectTo: `${getSiteUrl()}/auth/callback?next=/dashboard`,
+        data: {
+          full_name: parsed.data.fullName,
+          phone: parsed.data.phone,
+        },
+      },
+    })
+
+    if (signUpError) {
+      setError(signUpError.message)
+      return
+    }
+
+    setSubmitted(true)
   }
 
   return (
@@ -78,7 +101,16 @@ export default function SignupPage() {
               </div>
               <div>
                 <p className="font-sans text-white text-lg font-medium">Account Created!</p>
-                <p className="font-sans text-white/60 text-sm mt-2">Redirecting to login...</p>
+                <p className="font-sans text-white/60 text-sm mt-2">
+                  Check your email to verify your account, then sign in.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => router.push('/login')}
+                  className="mt-6 w-full rounded-sm bg-[#C0392B] py-3 font-sans text-base font-medium text-white transition-colors hover:bg-[#A93225]"
+                >
+                  Go to Sign In
+                </button>
               </div>
             </div>
           ) : (
